@@ -1,3 +1,4 @@
 Anonymous voting application revamped version 
 
-	- more info on the way 
+	- prototype https://www.figma.com/file/YszrkvKtYYPiAgUEj2xfNgGa/Undisclosed-HOST
+ 
