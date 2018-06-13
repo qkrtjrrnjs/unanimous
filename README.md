@@ -1,5 +1,5 @@
 # UNDISCLOSED 
-*Chris Park*
+*Seok Kwun Park (Chris)*
 
 ### DESCRIPTIONS
   - Anonymous voting application revamped version 
