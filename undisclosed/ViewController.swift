@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import MultipeerConnectivity
 
 class TableViewCell: UITableViewCell {
     
@@ -19,11 +20,56 @@ class TableViewCell: UITableViewCell {
     
 }
 
-class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-
-    var items = ["sdfkldsf", "owiejfoijw"]
+class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, MCSessionDelegate, MCBrowserViewControllerDelegate  {
+    
+    var items:[Item]!
+    var peerID:MCPeerID!
+    var mcSession:MCSession!
+    var mcAdvertiserAssistant:MCAdvertiserAssistant!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view, typically from a nib.
+        tableView.delegate = self
+        tableView.dataSource = self
+        setupConnectivity()
+    }//
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }//
     
     @IBOutlet weak var tableView: UITableView!
+    
+    @IBAction func showConnectivityAction(_ sender: Any) {
+        let actionSheet = UIAlertController(title: "ToDo Exchange", message: "Do you want to Host or Join a session?", preferredStyle: .actionSheet)
+        
+        actionSheet.addAction(UIAlertAction(
+            title: "Host Session",
+            style: .default,
+            handler: { (action:UIAlertAction) in
+                self.mcAdvertiserAssistant = MCAdvertiserAssistant(serviceType: "ysyp", discoveryInfo: nil, session: self.mcSession)
+                self.mcAdvertiserAssistant.start()
+        }))
+        
+        actionSheet.addAction(UIAlertAction(
+            title: "Join Session",
+            style: .default,
+            handler: { (action:UIAlertAction) in
+                let mcBrowser = MCBrowserViewController(serviceType: "ysyp", session: self.mcSession)
+                mcBrowser.delegate = self
+                self.present(mcBrowser, animated: true, completion: nil)
+        }))
+        
+        actionSheet.addAction(UIAlertAction(
+            title: "Cancel",
+            style: .cancel,
+            handler: nil
+        ))
+        
+        self.present(actionSheet, animated: true, completion: nil)
+    }
     
     @IBAction func addItem(_ sender: Any) {
         //create alert controller
@@ -43,10 +89,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             style: .default,
             handler: {(action:UIAlertAction) in
                 guard let item = alert.textFields?.first?.text else {return}
-                self.items.append(item)
+                let newItem = Item(name: item, itemIdentifier: UUID())
+                newItem.saveItem()
+                self.items.append(newItem)
                 self.tableView.reloadData()
             }
         ))
+        
         //add cancel btn
         alert.addAction(UIAlertAction(
             title: "Cancel",
@@ -57,17 +106,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         self.present(alert, animated: true, completion: nil)
     }//
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-        tableView.delegate = self
-        tableView.dataSource = self
-    }//
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }//
     
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
         return items.count
@@ -75,8 +113,52 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell{
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell") as! TableViewCell
-        cell.listLabel.text = items[indexPath.row]
+        cell.listLabel.text = items[indexPath.row].name
         return cell
+    }
+    
+    func setupConnectivity(){
+        peerID = MCPeerID(displayName: UIDevice.current.name)
+        mcSession = MCSession(peer: peerID, securityIdentity: nil, encryptionPreference: .required)
+        mcSession.delegate = self
+    }
+    
+    //MC Delegate functions
+    func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
+        switch state {
+        case MCSessionState.connected:
+            print("Connected: \(peerID.displayName)")
+            
+        case MCSessionState.connecting:
+            print("Connecting: \(peerID.displayName)")
+            
+        case MCSessionState.notConnected:
+            print("Not Connected: \(peerID.displayName)")
+        }
+    }
+    
+    func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
+        
+    }
+    
+    func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
+        
+    }
+    
+    func session(_ session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, with progress: Progress) {
+        
+    }
+    
+    func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) {
+        
+    }
+    
+    func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    func browserViewControllerWasCancelled(_ browserViewController: MCBrowserViewController) {
+        dismiss(animated: true, completion: nil)
     }
 
 
