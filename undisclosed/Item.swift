@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct Item:Codable{
+struct Item : Codable{
     var name:String
     var itemIdentifier:UUID
 

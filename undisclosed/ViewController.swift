@@ -22,7 +22,7 @@ class TableViewCell: UITableViewCell {
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, MCSessionDelegate, MCBrowserViewControllerDelegate  {
     
-    var items:[Item]!
+    var items = [Item]()
     var peerID:MCPeerID!
     var mcSession:MCSession!
     var mcAdvertiserAssistant:MCAdvertiserAssistant!
@@ -39,6 +39,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }//
+    
+    
     
     @IBOutlet weak var tableView: UITableView!
     
@@ -88,8 +90,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             title: "Create",
             style: .default,
             handler: {(action:UIAlertAction) in
-                guard let item = alert.textFields?.first?.text else {return}
-                let newItem = Item(name: item, itemIdentifier: UUID())
+                guard let name = alert.textFields?.first?.text else {return}
+                let newItem = Item(name: name, itemIdentifier: UUID())
                 newItem.saveItem()
                 self.items.append(newItem)
                 self.tableView.reloadData()
@@ -105,6 +107,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         self.present(alert, animated: true, completion: nil)
     }//
+    
     
     
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
