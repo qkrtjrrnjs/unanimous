@@ -40,12 +40,32 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         // Dispose of any resources that can be recreated.
     }//
     
+    func loadData(){
+        items = [Item]()
+        items = DataManager.loadAll(Item.self)
+        self.tableView.reloadData()
+    }
     
+
+    
+    func sendItem (_ item: Item){
+        if mcSession.connectedPeers.count > 0{
+            if let itemData = DataManager.loadData(item.itemIdentifier.uuidString){
+                do{
+                    try mcSession.send(itemData, toPeers: mcSession.connectedPeers, with: .reliable)
+                }catch{
+                    fatalError("could not send item")
+                }
+            }
+        }else{
+            print("not connected to other device")
+        }
+    }
     
     @IBOutlet weak var tableView: UITableView!
     
     @IBAction func showConnectivityAction(_ sender: Any) {
-        let actionSheet = UIAlertController(title: "ToDo Exchange", message: "Do you want to Host or Join a session?", preferredStyle: .actionSheet)
+        let actionSheet = UIAlertController(title: "Share Item List", message: "Do you want to Host or Join a session?", preferredStyle: .actionSheet)
         
         actionSheet.addAction(UIAlertAction(
             title: "Host Session",
@@ -94,6 +114,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 let newItem = Item(name: name, itemIdentifier: UUID())
                 newItem.saveItem()
                 self.items.append(newItem)
+                self.sendItem(newItem)
                 self.tableView.reloadData()
             }
         ))
@@ -141,6 +162,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
+        do{
+            let item = try JSONDecoder().decode(Item.self, from: data)
+            DataManager.save(item, with: item.itemIdentifier.uuidString)
+            
+            DispatchQueue.main.async {
+                self.loadData()
+            }
+        }catch{
+            fatalError("Unable to process received data")
+        }
         
     }
     
