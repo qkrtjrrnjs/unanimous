@@ -33,6 +33,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.delegate = self
         tableView.dataSource = self
         setupConnectivity()
+        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressed(sender:)))
+        self.view.addGestureRecognizer(longPressRecognizer)
     }//
     
     override func didReceiveMemoryWarning() {
@@ -46,8 +48,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         self.tableView.reloadData()
     }
     
-
-    
     func sendItem (_ item: Item){
         if mcSession.connectedPeers.count > 0{
             if let itemData = DataManager.loadData(item.itemIdentifier.uuidString){
@@ -59,6 +59,18 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             }
         }else{
             print("not connected to other device")
+        }
+    }
+    
+    @objc func longPressed(sender: UILongPressGestureRecognizer) {
+        
+        if sender.state == UIGestureRecognizerState.began {
+            
+            let touchPoint = sender.location(in: self.tableView)
+            if let indexPath = tableView.indexPathForRow(at: touchPoint) {
+                
+                print("Long pressed row: \(indexPath.row)")
+            }
         }
     }
     
