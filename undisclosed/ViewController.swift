@@ -35,6 +35,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         setupConnectivity()
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressed(sender:)))
         self.view.addGestureRecognizer(longPressRecognizer)
+        
+        for i in 0..<items.count{
+            //items[i].deleteItem()
+            //items.remove(at: i)
+            DataManager.delete(items[i].itemIdentifier.uuidString)
+        }
+        self.loadData()
     }//
     
     override func didReceiveMemoryWarning() {
@@ -68,10 +75,33 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             
             let touchPoint = sender.location(in: self.tableView)
             if let indexPath = tableView.indexPathForRow(at: touchPoint) {
-                items[indexPath.row].deleteItem()
-                items.remove(at: indexPath.row)
-                tableView.deleteRows(at: [indexPath], with: .automatic)
-                print("Long pressed row: \(indexPath.row)")
+                
+                let actionSheet = UIAlertController(title: "Delete", message: "Are you sure want to delete this item?", preferredStyle: .actionSheet)
+                
+                actionSheet.addAction(UIAlertAction(
+                    title: "Yes",
+                    style: .default,
+                    handler: { (action:UIAlertAction) in
+                        self.items[indexPath.row].deleteItem()
+                        self.items.remove(at: indexPath.row)
+                        self.tableView.deleteRows(at: [indexPath], with: .automatic)
+                        self.loadData()
+                }))
+                
+                actionSheet.addAction(UIAlertAction(
+                    title: "No",
+                    style: .default,
+                    handler: nil
+                ))
+                
+                if let popoverController = actionSheet.popoverPresentationController {
+                    popoverController.sourceView = self.view
+                    popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+                    popoverController.permittedArrowDirections = []
+                }
+                
+                self.present(actionSheet, animated: true, completion: nil)
+                //print("Long pressed row: \(indexPath.row)")
             }
         }
     }
@@ -111,6 +141,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
         
         self.present(actionSheet, animated: true, completion: nil)
+    }
+    
+    func setupConnectivity(){
+        peerID = MCPeerID(displayName: UIDevice.current.name)
+        mcSession = MCSession(peer: peerID, securityIdentity: nil, encryptionPreference: .none)
+        mcSession.delegate = self
     }
     
     @IBAction func addItem(_ sender: Any) {
@@ -161,11 +197,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         return cell
     }
     
-    func setupConnectivity(){
-        peerID = MCPeerID(displayName: UIDevice.current.name)
-        mcSession = MCSession(peer: peerID, securityIdentity: nil, encryptionPreference: .required)
-        mcSession.delegate = self
-    }
     
     //MC Delegate functions
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
