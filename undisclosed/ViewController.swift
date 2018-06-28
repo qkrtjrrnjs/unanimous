@@ -5,7 +5,6 @@
 //  Created by chris on 6/11/18.
 //  Copyright © 2018 YSYP. All rights reserved.
 //
-
 import UIKit
 import MultipeerConnectivity
 
@@ -36,12 +35,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressed(sender:)))
         self.view.addGestureRecognizer(longPressRecognizer)
         
-        for i in 0..<items.count{
-            //items[i].deleteItem()
-            //items.remove(at: i)
-            DataManager.delete(items[i].itemIdentifier.uuidString)
-        }
-        self.loadData()
     }//
     
     override func didReceiveMemoryWarning() {
@@ -50,7 +43,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }//
     
     func loadData(){
-        items = [Item]()
+        //items = [Item]()
         items = DataManager.loadAll(Item.self)
         self.tableView.reloadData()
     }
@@ -69,6 +62,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
     }
     
+    
     @objc func longPressed(sender: UILongPressGestureRecognizer) {
         
         if sender.state == UIGestureRecognizerState.began {
@@ -82,10 +76,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                     title: "Yes",
                     style: .default,
                     handler: { (action:UIAlertAction) in
+                        self.items[indexPath.row].addOrDelete = "delete"
+                        self.items[indexPath.row].saveItem()
+                        self.sendItem(self.items[indexPath.row])
                         self.items[indexPath.row].deleteItem()
                         self.items.remove(at: indexPath.row)
                         self.tableView.deleteRows(at: [indexPath], with: .automatic)
-                        self.loadData()
                 }))
                 
                 actionSheet.addAction(UIAlertAction(
@@ -167,7 +163,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             style: .default,
             handler: {(action:UIAlertAction) in
                 guard let name = alert.textFields?.first?.text else {return}
-                let newItem = Item(name: name, itemIdentifier: UUID())
+                let newItem = Item(name: name, itemIdentifier: UUID(), addOrDelete: "add")
                 newItem.saveItem()
                 self.items.append(newItem)
                 self.sendItem(newItem)
@@ -214,8 +210,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
         do{
-            let item = try JSONDecoder().decode(Item.self, from: data)
-            DataManager.save(item, with: item.itemIdentifier.uuidString)
+            var item = try JSONDecoder().decode(Item.self, from: data)
+            if(item.addOrDelete == "add"){
+                item.addOrDelete = "delete"
+                DataManager.save(item, with: item.itemIdentifier.uuidString)
+            }
+            else{
+                DataManager.delete(item.itemIdentifier.uuidString)
+            }
             
             DispatchQueue.main.async {
                 self.loadData()
