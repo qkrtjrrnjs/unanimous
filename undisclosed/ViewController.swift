@@ -50,11 +50,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     var navigationBarApperance = UINavigationBar.appearance()
     
     //hex to UIColor
-    var barColor = UIColor(hexString: "#4d5784")
-    var tintColor = UIColor(hexString: "#fff2e5")
-    var tableViewColor = UIColor(hexString: "#ABA7AB")
-    var borderColor = UIColor(hexString: "#ABA7AB")
-    
+    var barColor = UIColor(hexString: "#192438")
+    var tintColor = UIColor(hexString: "#43787c")
+    var tableViewColor = UIColor(hexString: "#394856")
+    var borderColor = UIColor(hexString: "#2b9ddb")
+    var textColor = UIColor(hexString: "192438")
+    var buttonBackgroundColor = UIColor(hexString: "43787c")
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -68,13 +70,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         self.view.addGestureRecognizer(longPressRecognizer)
 
         //change color of navigation bar
-        self.view.backgroundColor = UIColor.white
+        self.view.backgroundColor = tableViewColor
         navigationBarApperance.barTintColor = barColor
         navigationBarApperance.tintColor = tintColor
-        tableView.backgroundColor = UIColor.white
-        voteButton.layer.borderWidth = 1
-        voteButton.layer.borderColor = borderColor.cgColor
-        
+        tableView.backgroundColor = tableViewColor
+        //voteButton.layer.borderWidth = 1
+        //voteButton.layer.borderColor = borderColor.cgColor
+        voteButton.layer.backgroundColor = buttonBackgroundColor.cgColor
+        voteButton.setTitleColor(textColor, for: .normal)
     }//
     
     override func didReceiveMemoryWarning() {
