@@ -8,6 +8,26 @@
 import UIKit
 import MultipeerConnectivity
 
+extension UIColor {
+    convenience init(hexString: String) {
+        let hex = hexString.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int = UInt32()
+        Scanner(string: hex).scanHexInt32(&int)
+        let a, r, g, b: UInt32
+        switch hex.count {
+        case 3: // RGB (12-bit)
+            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
+        case 6: // RGB (24-bit)
+            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
+        case 8: // ARGB (32-bit)
+            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
+        default:
+            (a, r, g, b) = (255, 0, 0, 0)
+        }
+        self.init(red: CGFloat(r) / 255, green: CGFloat(g) / 255, blue: CGFloat(b) / 255, alpha: CGFloat(a) / 255)
+    }
+}
+
 class TableViewCell: UITableViewCell {
     
     @IBOutlet weak var listLabel: UILabel!
@@ -22,18 +42,38 @@ class TableViewCell: UITableViewCell {
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, MCSessionDelegate, MCBrowserViewControllerDelegate  {
     
     var items = [Item]()
+    
     var peerID:MCPeerID!
     var mcSession:MCSession!
     var mcAdvertiserAssistant:MCAdvertiserAssistant!
     
+    var navigationBarApperance = UINavigationBar.appearance()
+    
+    //hex to UIColor
+    var barColor = UIColor(hexString: "#4d5784")
+    var tintColor = UIColor(hexString: "#fff2e5")
+    var tableViewColor = UIColor(hexString: "#ABA7AB")
+    var borderColor = UIColor(hexString: "#ABA7AB")
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+
         tableView.delegate = self
         tableView.dataSource = self
+        
         setupConnectivity()
+        
+        //add Long press Gesture
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressed(sender:)))
         self.view.addGestureRecognizer(longPressRecognizer)
+
+        //change color of navigation bar
+        self.view.backgroundColor = UIColor.white
+        navigationBarApperance.barTintColor = barColor
+        navigationBarApperance.tintColor = tintColor
+        tableView.backgroundColor = UIColor.white
+        voteButton.layer.borderWidth = 1
+        voteButton.layer.borderColor = borderColor.cgColor
         
     }//
     
@@ -41,6 +81,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }//
+    
+    @IBOutlet weak var voteButton: UIButton!
     
     func loadData(){
         //items = [Item]()
