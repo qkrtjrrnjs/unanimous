@@ -50,12 +50,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     var navigationBarApperance = UINavigationBar.appearance()
     
     //hex to UIColor
-    var barColor = UIColor(hexString: "#192438")
-    var tintColor = UIColor(hexString: "#43787c")
-    var tableViewColor = UIColor(hexString: "#394856")
-    var borderColor = UIColor(hexString: "#2b9ddb")
-    var textColor = UIColor(hexString: "192438")
-    var buttonBackgroundColor = UIColor(hexString: "43787c")
+    var color1 = UIColor(hexString: "#ff5958")
+    var color2 = UIColor(hexString: "#ffffff")
+    var color3 = UIColor(hexString: "ff88a4")
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -69,15 +66,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressed(sender:)))
         self.view.addGestureRecognizer(longPressRecognizer)
 
-        //change color of navigation bar
-        self.view.backgroundColor = tableViewColor
-        navigationBarApperance.barTintColor = barColor
-        navigationBarApperance.tintColor = tintColor
-        tableView.backgroundColor = tableViewColor
-        //voteButton.layer.borderWidth = 1
-        //voteButton.layer.borderColor = borderColor.cgColor
-        voteButton.layer.backgroundColor = buttonBackgroundColor.cgColor
-        voteButton.setTitleColor(textColor, for: .normal)
+        //change style
+        self.view.backgroundColor = color2
+        navigationBarApperance.barTintColor = color1
+        navigationBarApperance.tintColor = color2
+        tableView.backgroundColor = color2
+        voteButton.layer.backgroundColor = color1.cgColor
+        voteButton.setTitleColor(color2, for: .normal)
     }//
     
     override func didReceiveMemoryWarning() {
@@ -142,13 +137,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 }
                 
                 self.present(actionSheet, animated: true, completion: nil)
-                //print("Long pressed row: \(indexPath.row)")
             }
         }
     }
     
     @IBOutlet weak var tableView: UITableView!
     
+    //connect button
     @IBAction func showConnectivityAction(_ sender: Any) {
         let actionSheet = UIAlertController(title: "Share Item List", message: "Do you want to Host or Join a session?", preferredStyle: .actionSheet)
         
@@ -190,6 +185,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         mcSession.delegate = self
     }
     
+    //add itme button
     @IBAction func addItem(_ sender: Any) {
         //create alert controller
         let alert = UIAlertController(
@@ -234,6 +230,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell{
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell") as! TableViewCell
+        cell.backgroundColor = color2
+        cell.listLabel.textColor = UIColor.black
         cell.listLabel.text = items[indexPath.row].name
         return cell
     }
