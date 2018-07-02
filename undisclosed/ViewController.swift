@@ -169,6 +169,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 let mcBrowser = MCBrowserViewController(serviceType: "ysyp", session: self.mcSession)
                 mcBrowser.delegate = self
                 self.present(mcBrowser, animated: true, completion: nil)
+                self.voteButton.isHidden = true
+                self.voteButton.isEnabled = false
         }))
         
         actionSheet.addAction(UIAlertAction(
