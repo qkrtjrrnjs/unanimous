@@ -73,6 +73,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.backgroundColor = color2
         voteButton.layer.backgroundColor = color1.cgColor
         voteButton.setTitleColor(color2, for: .normal)
+        
+        //hide and disable button until user hosts session (not join session)
+        voteButton.isHidden = true
+        voteButton.isEnabled = false
+        
     }//
     
     override func didReceiveMemoryWarning() {
@@ -153,6 +158,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             handler: { (action:UIAlertAction) in
                 self.mcAdvertiserAssistant = MCAdvertiserAssistant(serviceType: "ysyp", discoveryInfo: nil, session: self.mcSession)
                 self.mcAdvertiserAssistant.start()
+                self.voteButton.isHidden = false
+                self.voteButton.isEnabled = true
         }))
         
         actionSheet.addAction(UIAlertAction(
