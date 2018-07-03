@@ -74,10 +74,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         voteButton.layer.backgroundColor = color1.cgColor
         voteButton.setTitleColor(color2, for: .normal)
         
-        //hide and disable button until user hosts session (not join session)
-        voteButton.isHidden = true
-        voteButton.isEnabled = false
-        
+        items = DataManager.loadAll(Item.self)
+        if(items.count != 0){
+            for i in 0...items.count{
+                items[i].deleteItem()
+            }
+        }
     }//
     
     override func didReceiveMemoryWarning() {
@@ -234,10 +236,15 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             handler: {(action:UIAlertAction) in
                 guard let name = alert.textFields?.first?.text else {return}
                 let newItem = Item(name: name, itemIdentifier: UUID(), addOrDelete: "add")
-                newItem.saveItem()
-                self.items.append(newItem)
-                self.sendItem(newItem)
-                self.tableView.reloadData()
+                if self.mcSession.connectedPeers.count > 0{
+                    newItem.saveItem()
+                    self.items.append(newItem)
+                    self.sendItem(newItem)
+                    self.tableView.reloadData()
+                }else{
+                    self.items.append(newItem)
+                    self.tableView.reloadData()
+                }
             }
         ))
         
