@@ -87,6 +87,26 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     @IBOutlet weak var voteButton: UIButton!
     
+    @IBAction func voteButton(_ sender: Any) {
+        if(items.count == 0){
+            let actionSheet = UIAlertController(title: "ERROR", message: "You must add an item before you can vote", preferredStyle: .actionSheet)
+            
+            actionSheet.addAction(UIAlertAction(
+                title: "OK",
+                style: .default,
+                handler: nil
+            ))
+            
+            if let popoverController = actionSheet.popoverPresentationController {
+                popoverController.sourceView = self.view
+                popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+                popoverController.permittedArrowDirections = []
+            }
+            
+            self.present(actionSheet, animated: true, completion: nil)
+        }
+    }
+    
     func loadData(){
         //items = [Item]()
         items = DataManager.loadAll(Item.self)
