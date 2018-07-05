@@ -79,6 +79,7 @@
                                 </userDefinedRuntimeAttributes>
                                 <connections>
                                     <action selector="voteButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="vSh-3h-Aa7"/>
+                                    <segue destination="sGr-Uk-unK" kind="show" id="D7a-dF-C0p"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -93,6 +94,21 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="136.80000000000001" y="133.5832083958021"/>
+        </scene>
+        <!--Vote View Controller-->
+        <scene sceneID="sUb-FQ-hZU">
+            <objects>
+                <viewController id="sGr-Uk-unK" customClass="VoteViewController" customModule="undisclosed" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="JCX-Pv-Xoy">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="kkk-4G-ab4"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="UKD-yw-pmO" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1010" y="134"/>
         </scene>
     </scenes>
 </document>
