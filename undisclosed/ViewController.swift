@@ -8,26 +8,6 @@
 import UIKit
 import MultipeerConnectivity
 
-extension UIColor {
-    convenience init(hexString: String) {
-        let hex = hexString.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
-        var int = UInt32()
-        Scanner(string: hex).scanHexInt32(&int)
-        let a, r, g, b: UInt32
-        switch hex.count {
-        case 3: // RGB (12-bit)
-            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
-        case 6: // RGB (24-bit)
-            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
-        case 8: // ARGB (32-bit)
-            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
-        default:
-            (a, r, g, b) = (255, 0, 0, 0)
-        }
-        self.init(red: CGFloat(r) / 255, green: CGFloat(g) / 255, blue: CGFloat(b) / 255, alpha: CGFloat(a) / 255)
-    }
-}
-
 class TableViewCell: UITableViewCell {
     
     @IBOutlet weak var listLabel: UILabel!
@@ -37,7 +17,7 @@ class TableViewCell: UITableViewCell {
         // Initialization code
     }
     
-}
+} 
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, MCSessionDelegate, MCBrowserViewControllerDelegate  {
     
@@ -75,6 +55,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         voteButton.setTitleColor(color2, for: .normal)
         
         items = DataManager.loadAll(Item.self)
+    
         if(items.count != 0){
             for i in 0...items.count{
                 items[i].deleteItem()
@@ -89,8 +70,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     @IBOutlet weak var voteButton: UIButton!
     
+    //vote button func
     @IBAction func voteButton(_ sender: Any) {
-        if(items.count == 0){
+        if(items.count < 1){
             let actionSheet = UIAlertController(title: "ERROR", message: "You must add an item before you can vote", preferredStyle: .actionSheet)
             
             actionSheet.addAction(UIAlertAction(
@@ -105,7 +87,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 popoverController.permittedArrowDirections = []
             }
             
+            //actionSheet.show(self, sender: nil)
             self.present(actionSheet, animated: true, completion: nil)
+        }else{
+            
+            // Safe Present
+            if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "VoteViewController") as? VoteViewController
+            {
+                vc.items = self.items
+                present(vc, animated: true, completion: nil)
+            }
         }
     }
     

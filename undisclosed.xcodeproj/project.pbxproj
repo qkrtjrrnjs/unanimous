@@ -15,6 +15,7 @@
 		83385F9720CF549D000BAA9B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 83385F9520CF549D000BAA9B /* LaunchScreen.storyboard */; };
 		83385FA320D738A3000BAA9B /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83385FA220D738A3000BAA9B /* Item.swift */; };
 		83385FA520D738FE000BAA9B /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83385FA420D738FE000BAA9B /* DataManager.swift */; };
+		835BF9AC20F6E369003C01D1 /* hexToUIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835BF9AB20F6E369003C01D1 /* hexToUIColor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 		83385F9820CF549D000BAA9B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		83385FA220D738A3000BAA9B /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		83385FA420D738FE000BAA9B /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
+		835BF9AB20F6E369003C01D1 /* hexToUIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = hexToUIColor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +63,7 @@
 			isa = PBXGroup;
 			children = (
 				83385F8C20CF549B000BAA9B /* AppDelegate.swift */,
+				835BF9AB20F6E369003C01D1 /* hexToUIColor.swift */,
 				83385F8E20CF549B000BAA9B /* ViewController.swift */,
 				8310FE2F20EDB16100520AF6 /* VoteViewController.swift */,
 				83385FA220D738A3000BAA9B /* Item.swift */,
@@ -146,6 +149,7 @@
 			files = (
 				83385F8F20CF549B000BAA9B /* ViewController.swift in Sources */,
 				83385FA520D738FE000BAA9B /* DataManager.swift in Sources */,
+				835BF9AC20F6E369003C01D1 /* hexToUIColor.swift in Sources */,
 				8310FE3020EDB16100520AF6 /* VoteViewController.swift in Sources */,
 				83385FA320D738A3000BAA9B /* Item.swift in Sources */,
 				83385F8D20CF549B000BAA9B /* AppDelegate.swift in Sources */,

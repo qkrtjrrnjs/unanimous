@@ -79,7 +79,6 @@
                                 </userDefinedRuntimeAttributes>
                                 <connections>
                                     <action selector="voteButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="vSh-3h-Aa7"/>
-                                    <segue destination="sGr-Uk-unK" kind="show" id="D7a-dF-C0p"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -98,7 +97,7 @@
         <!--Vote View Controller-->
         <scene sceneID="sUb-FQ-hZU">
             <objects>
-                <viewController id="sGr-Uk-unK" customClass="VoteViewController" customModule="undisclosed" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="VoteViewController" id="sGr-Uk-unK" customClass="VoteViewController" customModule="undisclosed" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="JCX-Pv-Xoy">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -108,13 +107,25 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="cell" rowHeight="70" id="8Ax-7S-GJv">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="voteCell" rowHeight="70" id="8Ax-7S-GJv" customClass="VoteTableViewCell" customModule="undisclosed" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="375" height="70"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="8Ax-7S-GJv" id="Up4-WG-EBN" customClass="VoteTableViewCell">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="69.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Akv-mg-xgE">
+                                                    <rect key="frame" x="87" y="24" width="200" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="VoteCellLabel" destination="Akv-mg-xgE" id="efz-NH-Mdc"/>
+                                        </connections>
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
@@ -122,6 +133,9 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="kkk-4G-ab4"/>
                     </view>
+                    <connections>
+                        <outlet property="voteTableView" destination="eTi-ng-kwB" id="TVv-rg-KId"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UKD-yw-pmO" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
