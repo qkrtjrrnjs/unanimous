@@ -41,6 +41,7 @@ class VoteViewController: UIViewController, UITableViewDelegate, UITableViewData
         super.viewDidLoad()
         voteTableView.delegate = self
         voteTableView.dataSource = self
+        items = DataManager.loadAll(Item.self)
     }
         
 

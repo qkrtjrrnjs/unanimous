@@ -54,13 +54,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         voteButton.layer.backgroundColor = color1.cgColor
         voteButton.setTitleColor(color2, for: .normal)
         
-        items = DataManager.loadAll(Item.self)
-    
-        if(items.count != 0){
-            for i in 0...items.count{
-                items[i].deleteItem()
-            }
-        }
     }//
     
     override func didReceiveMemoryWarning() {
@@ -90,11 +83,19 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             //actionSheet.show(self, sender: nil)
             self.present(actionSheet, animated: true, completion: nil)
         }else{
+            let transition = Item(name: "*", itemIdentifier: UUID(), addOrDelete: "*", votes: 0)
+            transition.saveItem()
+            self.items.append(transition)
+            self.sendItem(transition)
+            //self.items.remove(at: items.count - 1)
+            self.items[items.count - 1].deleteItem()
             
             // Safe Present
             if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "VoteViewController") as? VoteViewController
             {
-                vc.items = self.items
+                if mcSession.connectedPeers.count < 1{
+                    vc.items = self.items
+                }
                 present(vc, animated: true, completion: nil)
             }
         }
@@ -103,6 +104,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     func loadData(){
         //items = [Item]()
         items = DataManager.loadAll(Item.self)
+        print(items.count)
         self.tableView.reloadData()
     }
     
@@ -226,7 +228,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             style: .default,
             handler: {(action:UIAlertAction) in
                 guard let name = alert.textFields?.first?.text else {return}
-                let newItem = Item(name: name, itemIdentifier: UUID(), addOrDelete: "add")
+                let newItem = Item(name: name, itemIdentifier: UUID(), addOrDelete: "add", votes: 0)
                 if self.mcSession.connectedPeers.count > 0{
                     newItem.saveItem()
                     self.items.append(newItem)
@@ -280,13 +282,24 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
         do{
+            
             var item = try JSONDecoder().decode(Item.self, from: data)
             if(item.addOrDelete == "add"){
                 item.addOrDelete = "delete"
                 DataManager.save(item, with: item.itemIdentifier.uuidString)
             }
-            else{
+            else if(item.addOrDelete == "delete"){
                 DataManager.delete(item.itemIdentifier.uuidString)
+            }
+            else{
+                if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "VoteViewController") as? VoteViewController
+                {
+                    if mcSession.connectedPeers.count < 1{
+                        vc.items = self.items
+                    }
+                    DataManager.delete(item.itemIdentifier.uuidString)
+                    present(vc, animated: true, completion: nil)
+                }
             }
             
             DispatchQueue.main.async {

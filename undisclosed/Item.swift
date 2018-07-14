@@ -12,6 +12,7 @@ struct Item : Codable{
     var name:String
     var itemIdentifier:UUID
     var addOrDelete:String
+    var votes: Int
 
     func saveItem() {
         DataManager.save(self, with: "\(itemIdentifier.uuidString)")
