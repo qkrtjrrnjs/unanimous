@@ -32,6 +32,7 @@ class VoteTableViewCell: UITableViewCell {
 class VoteViewController: UIViewController, UITableViewDelegate, UITableViewDataSource{
     
     var items = [Item]()
+    var peers = Int()
     
     var color1 = UIColor(hexString: "#ffffff")
     
@@ -41,7 +42,10 @@ class VoteViewController: UIViewController, UITableViewDelegate, UITableViewData
         super.viewDidLoad()
         voteTableView.delegate = self
         voteTableView.dataSource = self
-        items = DataManager.loadAll(Item.self)
+        
+        if(peers > 0){
+            items = DataManager.loadAll(Item.self)
+        }
     }
         
 

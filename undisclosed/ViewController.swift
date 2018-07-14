@@ -83,19 +83,20 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             //actionSheet.show(self, sender: nil)
             self.present(actionSheet, animated: true, completion: nil)
         }else{
-            let transition = Item(name: "*", itemIdentifier: UUID(), addOrDelete: "*", votes: 0)
-            transition.saveItem()
-            self.items.append(transition)
-            self.sendItem(transition)
-            //self.items.remove(at: items.count - 1)
-            self.items[items.count - 1].deleteItem()
+            if mcSession.connectedPeers.count > 0{
+                let transition = Item(name: "*", itemIdentifier: UUID(), addOrDelete: "*", votes: 0)
+                transition.saveItem()
+                self.items.append(transition)
+                self.sendItem(transition)
+                self.items[items.count - 1].deleteItem()
+            }
             
             // Safe Present
             if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "VoteViewController") as? VoteViewController
             {
-                if mcSession.connectedPeers.count < 1{
-                    vc.items = self.items
-                }
+                vc.items = self.items
+                vc.peers = mcSession.connectedPeers.count
+                vc.modalTransitionStyle = .crossDissolve
                 present(vc, animated: true, completion: nil)
             }
         }
