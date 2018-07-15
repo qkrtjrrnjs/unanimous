@@ -37,6 +37,7 @@ class VoteViewController: UIViewController, UITableViewDelegate, UITableViewData
     var color1 = UIColor(hexString: "#ffffff")
     
     @IBOutlet weak var voteTableView: UITableView!
+    @IBOutlet weak var voteButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,13 +48,21 @@ class VoteViewController: UIViewController, UITableViewDelegate, UITableViewData
             items = DataManager.loadAll(Item.self)
         }
     }
-        
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
+    @IBAction func voteButton(_ sender: Any) {
+        let indexPath = voteTableView.indexPathForSelectedRow
+        
+        self.items[(indexPath?.row)!].votes += 1
+        self.items[(indexPath?.row)!].saveItem()
+        
+        voteButton.isEnabled = false
+        voteButton.isHidden = true
+    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return items.count
