@@ -19,11 +19,30 @@
 
 import UIKit
 
-class ResultViewController: UIViewController {
+class ResultTableViewCell: UITableViewCell {
+    
+    @IBOutlet weak var ResultCellLabel: UILabel!
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        // Initialization code
+    }
+    
+}
 
+class ResultViewController: UIViewController, UITableViewDelegate, UITableViewDataSource{
+    
+    var items = [Item]()
+    
+    var color1 = UIColor(hexString: "#ffffff")
+
+    @IBOutlet weak var ResultTableView: UITableView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        ResultTableView.delegate = self
+        ResultTableView.dataSource = self
+        
         // Do any additional setup after loading the view.
     }
 
@@ -32,5 +51,15 @@ class ResultViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return items.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = ResultTableView.dequeueReusableCell(withIdentifier: "resultCell") as! ResultTableViewCell
+        cell.backgroundColor = color1
+        cell.ResultCellLabel.textColor = UIColor.black
+        cell.ResultCellLabel.text = items[indexPath.row].name + String(items[indexPath.row].votes)
+        return cell
+    }
 }

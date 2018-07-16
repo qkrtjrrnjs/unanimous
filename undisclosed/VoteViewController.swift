@@ -60,8 +60,12 @@ class VoteViewController: UIViewController, UITableViewDelegate, UITableViewData
         self.items[(indexPath?.row)!].votes += 1
         self.items[(indexPath?.row)!].saveItem()
         
-        voteButton.isEnabled = false
-        voteButton.isHidden = true
+        if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ResultViewController") as? ResultViewController
+        {
+            vc.items = self.items
+            vc.modalTransitionStyle = .crossDissolve
+            present(vc, animated: true, completion: nil)
+        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

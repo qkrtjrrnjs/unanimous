@@ -295,9 +295,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             else{
                 if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "VoteViewController") as? VoteViewController
                 {
-                    if mcSession.connectedPeers.count < 1{
-                        vc.items = self.items
-                    }
+                    vc.items = self.items
+                    vc.peers = mcSession.connectedPeers.count
+                    vc.modalTransitionStyle = .crossDissolve
                     DataManager.delete(item.itemIdentifier.uuidString)
                     present(vc, animated: true, completion: nil)
                 }
