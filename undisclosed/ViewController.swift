@@ -210,8 +210,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         mcSession.delegate = self
     }
     
-    //add itme button
-    @IBAction func addItem(_ sender: Any) {
+    func create(){
         //create alert controller
         let alert = UIAlertController(
             title: "New Item",
@@ -230,16 +229,34 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             handler: {(action:UIAlertAction) in
                 guard let name = alert.textFields?.first?.text else {return}
                 let newItem = Item(name: name, itemIdentifier: UUID(), addOrDelete: "add", votes: 0)
-                if self.mcSession.connectedPeers.count > 0{
-                    newItem.saveItem()
-                    self.items.append(newItem)
-                    self.sendItem(newItem)
-                    self.tableView.reloadData()
+                if name == ""{
+                    let actionSheet = UIAlertController(title: "ERROR", message: "Nothing was entered", preferredStyle: .actionSheet)
+                 
+                    actionSheet.addAction(UIAlertAction(
+                        title: "OK",
+                        style: .default,
+                        handler: { (action:UIAlertAction) in
+                                self.create()
+                    }))
+                    
+                    if let popoverController = actionSheet.popoverPresentationController {
+                        popoverController.sourceView = self.view
+                        popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+                        popoverController.permittedArrowDirections = []
+                    }
+                    self.present(actionSheet, animated: true, completion: nil)
                 }else{
-                    self.items.append(newItem)
-                    self.tableView.reloadData()
+                    if self.mcSession.connectedPeers.count > 0{
+                        newItem.saveItem()
+                        self.items.append(newItem)
+                        self.sendItem(newItem)
+                        self.tableView.reloadData()
+                    }else{
+                        self.items.append(newItem)
+                        self.tableView.reloadData()
+                    }
                 }
-            }
+        }
         ))
         
         //add cancel btn
@@ -250,6 +267,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         ))
         
         self.present(alert, animated: true, completion: nil)
+    }
+    
+    //add itme button
+    @IBAction func addItem(_ sender: Any) {
+        self.create()
     }//
     
     

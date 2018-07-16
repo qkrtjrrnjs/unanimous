@@ -44,6 +44,9 @@ class VoteViewController: UIViewController, UITableViewDelegate, UITableViewData
         voteTableView.delegate = self
         voteTableView.dataSource = self
         
+        voteButton.isHidden = false
+        voteButton.isEnabled = true
+        
         if(peers > 0){
             items = DataManager.loadAll(Item.self)
         }
