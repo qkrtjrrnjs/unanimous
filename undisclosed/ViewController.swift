@@ -61,50 +61,44 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         // Dispose of any resources that can be recreated.
     }//
     
+    @IBOutlet weak var add: UIBarButtonItem!
+    @IBOutlet weak var connect: UIBarButtonItem!
     @IBOutlet weak var voteButton: UIButton!
     
     //vote button func
     @IBAction func voteButton(_ sender: Any) {
         if(vote == 0){
-        if(items.count < 1){
-            let actionSheet = UIAlertController(title: "ERROR", message: "You must add an item before you can vote", preferredStyle: .actionSheet)
+            if(items.count < 1){
+                let actionSheet = UIAlertController(title: "ERROR", message: "You must add an item before you can vote", preferredStyle: .actionSheet)
             
-            actionSheet.addAction(UIAlertAction(
-                title: "OK",
-                style: .default,
-                handler: nil
-            ))
+                actionSheet.addAction(UIAlertAction(
+                    title: "OK",
+                    style: .default,
+                    handler: nil
+                ))
             
-            if let popoverController = actionSheet.popoverPresentationController {
-                popoverController.sourceView = self.view
-                popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
-                popoverController.permittedArrowDirections = []
+                if let popoverController = actionSheet.popoverPresentationController {
+                    popoverController.sourceView = self.view
+                    popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+                    popoverController.permittedArrowDirections = []
+                }
+                    self.present(actionSheet, animated: true, completion: nil)
             }
-            
-            //actionSheet.show(self, sender: nil)
-            self.present(actionSheet, animated: true, completion: nil)
-        }else{
-            if mcSession.connectedPeers.count > 0{
-                let transition = Item(name: "*", itemIdentifier: UUID(), addOrDelete: "*", votes: 0)
-                transition.saveItem()
-                self.items.append(transition)
-                self.sendItem(transition)
-                self.items[items.count - 1].deleteItem()
+            else{
+                if mcSession.connectedPeers.count > 0{
+                    let transition = Item(name: "*", itemIdentifier: UUID(), addOrDelete: "*", votes: 0)
+                    transition.saveItem()
+                    self.items.append(transition)
+                    self.sendItem(transition)
+                    self.items[items.count - 1].deleteItem()
+                }
             }
-            
-            // Safe Present
-            /*if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "VoteViewController") as? VoteViewController
-            {
-                vc.items = self.items
-                vc.mcSession = self.mcSession
-                vc.mcAdvertiserAssistant = self.mcAdvertiserAssistant
-                vc.peerID = self.peerID
-                vc.peers = mcSession.connectedPeers.count
-                vc.modalTransitionStyle = .crossDissolve
-                present(vc, animated: true, completion: nil)
-            }*/
-        }
             vote = 1
+            
+            //hide connect and add bar button
+            connect.isEnabled = false
+            add.isEnabled = false
+            navigationBarApperance.tintColor = color1
         }
         else{
             let indexPath = tableView.indexPathForSelectedRow
@@ -328,24 +322,15 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 DataManager.delete(item.itemIdentifier.uuidString)
             }
             else{
+                DataManager.delete(item.itemIdentifier.uuidString)
                 self.voteButton.isHidden = false
                 self.voteButton.isEnabled = true
-                /*if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "VoteViewController") as? VoteViewController
-                {
-                    vc.items = self.items
-                    vc.mcSession = self.mcSession
-                    vc.mcAdvertiserAssistant = self.mcAdvertiserAssistant
-                    vc.peerID = self.peerID
-                    vc.peers = mcSession.connectedPeers.count
-                    vc.modalTransitionStyle = .crossDissolve
-                    DataManager.delete(item.itemIdentifier.uuidString)
-                    present(vc, animated: true, completion: nil)
-                }*/
+                voteButton.isEnabled = true
+                voteButton.isHidden = false
             }
             
             DispatchQueue.main.async {
-                self.items = DataManager.loadAll(Item.self)
-                self.tableView.reloadData()
+                self.loadData()
             }
         }catch{
             fatalError("Unable to process received data")
