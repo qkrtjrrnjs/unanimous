@@ -54,6 +54,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.backgroundColor = color2
         voteButton.layer.backgroundColor = color1.cgColor
         voteButton.setTitleColor(color2, for: .normal)
+        
     }//
     
     override func didReceiveMemoryWarning() {
@@ -86,27 +87,29 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             }
             else{
                 if mcSession.connectedPeers.count > 0{
-                    let transition = Item(name: "*", itemIdentifier: UUID(), addOrDelete: "*", votes: 0)
-                    transition.saveItem()
-                    self.items.append(transition)
-                    self.sendItem(transition)
-                    self.items[items.count - 1].deleteItem()
+                    self.sendStatus(status: "vote")
                 }
             }
+            
             vote = 1
             
             //hide connect and add bar button
             connect.isEnabled = false
             add.isEnabled = false
-            navigationBarApperance.tintColor = color1
+            navigationBarApperance.tintColor = .clear
         }
         else{
             let indexPath = tableView.indexPathForSelectedRow
             
-            self.items[(indexPath?.row)!].votes += 1
-            self.items[(indexPath?.row)!].saveItem()
-            self.sendItem(self.items[(indexPath?.row)!])
-            self.tableView.reloadData()
+            if(indexPath?.row != nil){
+                self.items[(indexPath?.row)!].votes += 1
+                self.items[(indexPath?.row)!].addOrDelete = "update"
+                self.items[(indexPath?.row)!].saveItem()
+                self.sendItem(self.items[(indexPath?.row)!])
+                self.tableView.reloadData()
+            }else{
+                print("error")
+            }
         }
     }
     
@@ -115,21 +118,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         items = DataManager.loadAll(Item.self)
         self.tableView.reloadData()
     }
-    
-    func sendItem (_ item: Item){
-        if mcSession.connectedPeers.count > 0{
-            if let itemData = DataManager.loadData(item.itemIdentifier.uuidString){
-                do{
-                    try mcSession.send(itemData, toPeers: mcSession.connectedPeers, with: .reliable)
-                }catch{
-                    fatalError("could not send item")
-                }
-            }
-        }else{
-            print("not connected to other device")
-        }
-    }
-    
     
     @objc func longPressed(sender: UILongPressGestureRecognizer) {
         
@@ -296,6 +284,32 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     
+    func sendItem (_ item: Item){
+        if mcSession.connectedPeers.count > 0{
+            if let itemData = DataManager.loadData(item.itemIdentifier.uuidString){
+                do{
+                    try mcSession.send(itemData, toPeers: mcSession.connectedPeers, with: .reliable)
+                }catch{
+                    fatalError("could not send item")
+                }
+            }
+        }else{
+            print("not connected to other device")
+        }
+    }
+    
+    func sendStatus(status : String) {
+        if mcSession.connectedPeers.count > 0 {
+            do {
+                try self.mcSession.send(status.data(using: .utf8)!, toPeers: mcSession.connectedPeers, with: .reliable)
+            }
+            catch let error {
+                print("%@", "Error for sending: \(error)")
+            }
+        }
+    }
+
+    
     //MC Delegate functions
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
         switch state {
@@ -321,19 +335,35 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             else if(item.addOrDelete == "delete"){
                 DataManager.delete(item.itemIdentifier.uuidString)
             }
-            else{
-                DataManager.delete(item.itemIdentifier.uuidString)
-                self.voteButton.isHidden = false
-                self.voteButton.isEnabled = true
-                voteButton.isEnabled = true
-                voteButton.isHidden = false
+            else if(item.addOrDelete == "update"){
+                DataManager.save(item, with: item.itemIdentifier.uuidString)
             }
             
             DispatchQueue.main.async {
-                self.loadData()
+                self.items = DataManager.loadAll(Item.self)
+                self.tableView.reloadData()
+            }
+            
+        }catch{
+            print("Unable to process received data")
+        }
+        
+        do{
+            let status = try JSONDecoder().decode(String.self, from: data)
+            if(status == "vote"){
+                self.connect.isEnabled = false
+                self.add.isEnabled = false
+                self.navigationBarApperance.tintColor = .clear
+                self.vote = 1
+            }
+            
+            DispatchQueue.main.async {
+                self.connect.isEnabled = false
+                self.add.isEnabled = false
+                self.navigationBarApperance.tintColor = .clear
             }
         }catch{
-            fatalError("Unable to process received data")
+            print("Unable to process received data")
         }
         
     }

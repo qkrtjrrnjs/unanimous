@@ -86,8 +86,8 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
-                        <outlet property="add" destination="rbc-lT-fMq" id="vxw-1l-5dd"/>
-                        <outlet property="connect" destination="kSM-ho-bFs" id="a5U-CN-Q03"/>
+                        <outlet property="add" destination="rbc-lT-fMq" id="MT8-Ro-tTa"/>
+                        <outlet property="connect" destination="kSM-ho-bFs" id="f2j-pz-spt"/>
                         <outlet property="tableView" destination="8cu-pU-Fu6" id="owM-H8-bgJ"/>
                         <outlet property="voteButton" destination="Rsj-cD-H7S" id="UJR-Uh-JgC"/>
                     </connections>
