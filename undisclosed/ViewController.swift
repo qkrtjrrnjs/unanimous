@@ -22,6 +22,7 @@ class TableViewCell: UITableViewCell {
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, MCSessionDelegate, MCBrowserViewControllerDelegate  {
     
     var items = [Item]()
+    var vote = 0
     
     var peerID:MCPeerID!
     var mcSession:MCSession!
@@ -53,7 +54,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.backgroundColor = color2
         voteButton.layer.backgroundColor = color1.cgColor
         voteButton.setTitleColor(color2, for: .normal)
-        
     }//
     
     override func didReceiveMemoryWarning() {
@@ -65,6 +65,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     //vote button func
     @IBAction func voteButton(_ sender: Any) {
+        if(vote == 0){
         if(items.count < 1){
             let actionSheet = UIAlertController(title: "ERROR", message: "You must add an item before you can vote", preferredStyle: .actionSheet)
             
@@ -92,20 +93,32 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             }
             
             // Safe Present
-            if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "VoteViewController") as? VoteViewController
+            /*if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "VoteViewController") as? VoteViewController
             {
                 vc.items = self.items
+                vc.mcSession = self.mcSession
+                vc.mcAdvertiserAssistant = self.mcAdvertiserAssistant
+                vc.peerID = self.peerID
                 vc.peers = mcSession.connectedPeers.count
                 vc.modalTransitionStyle = .crossDissolve
                 present(vc, animated: true, completion: nil)
-            }
+            }*/
+        }
+            vote = 1
+        }
+        else{
+            let indexPath = tableView.indexPathForSelectedRow
+            
+            self.items[(indexPath?.row)!].votes += 1
+            self.items[(indexPath?.row)!].saveItem()
+            self.sendItem(self.items[(indexPath?.row)!])
+            self.tableView.reloadData()
         }
     }
     
     func loadData(){
         //items = [Item]()
         items = DataManager.loadAll(Item.self)
-        print(items.count)
         self.tableView.reloadData()
     }
     
@@ -284,7 +297,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell") as! TableViewCell
         cell.backgroundColor = color2
         cell.listLabel.textColor = UIColor.black
-        cell.listLabel.text = items[indexPath.row].name
+        cell.listLabel.text = items[indexPath.row].name + " : " + String(items[indexPath.row].votes) + " votes"
         return cell
     }
     
@@ -315,18 +328,24 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 DataManager.delete(item.itemIdentifier.uuidString)
             }
             else{
-                if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "VoteViewController") as? VoteViewController
+                self.voteButton.isHidden = false
+                self.voteButton.isEnabled = true
+                /*if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "VoteViewController") as? VoteViewController
                 {
                     vc.items = self.items
+                    vc.mcSession = self.mcSession
+                    vc.mcAdvertiserAssistant = self.mcAdvertiserAssistant
+                    vc.peerID = self.peerID
                     vc.peers = mcSession.connectedPeers.count
                     vc.modalTransitionStyle = .crossDissolve
                     DataManager.delete(item.itemIdentifier.uuidString)
                     present(vc, animated: true, completion: nil)
-                }
+                }*/
             }
             
             DispatchQueue.main.async {
-                self.loadData()
+                self.items = DataManager.loadAll(Item.self)
+                self.tableView.reloadData()
             }
         }catch{
             fatalError("Unable to process received data")

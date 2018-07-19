@@ -170,7 +170,7 @@
         <!--Result View Controller-->
         <scene sceneID="mNE-GC-GV6">
             <objects>
-                <viewController storyboardIdentifier="ResultViewController" id="jt4-90-82V" customClass="ResultViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ResultViewController" id="jt4-90-82V" customClass="ResultViewController" customModule="undisclosed" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="4IE-XK-k4O">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

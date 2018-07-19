@@ -33,9 +33,11 @@ class ResultTableViewCell: UITableViewCell {
 class ResultViewController: UIViewController, UITableViewDelegate, UITableViewDataSource{
     
     var items = [Item]()
+    var peers = Int()
     
-    var color1 = UIColor(hexString: "#ffffff")
-
+    var color1 = UIColor(hexString: "#ff5958")
+    var color2 = UIColor(hexString: "#ffffff")
+    
     @IBOutlet weak var ResultTableView: UITableView!
     
     override func viewDidLoad() {
@@ -43,7 +45,10 @@ class ResultViewController: UIViewController, UITableViewDelegate, UITableViewDa
         ResultTableView.delegate = self
         ResultTableView.dataSource = self
         
-        // Do any additional setup after loading the view.
+        if(peers > 0){
+            items = DataManager.loadAll(Item.self)
+        }
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -57,9 +62,9 @@ class ResultViewController: UIViewController, UITableViewDelegate, UITableViewDa
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = ResultTableView.dequeueReusableCell(withIdentifier: "resultCell") as! ResultTableViewCell
-        cell.backgroundColor = color1
+        cell.backgroundColor = color2
         cell.ResultCellLabel.textColor = UIColor.black
-        cell.ResultCellLabel.text = items[indexPath.row].name + String(items[indexPath.row].votes)
+        cell.ResultCellLabel.text = items[indexPath.row].name + " : " + String(items[indexPath.row].votes) + " votes"
         return cell
     }
 }

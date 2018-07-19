@@ -17,6 +17,7 @@
  */
 
 import UIKit
+import MultipeerConnectivity
 
 class VoteTableViewCell: UITableViewCell {
     
@@ -34,8 +35,13 @@ class VoteViewController: UIViewController, UITableViewDelegate, UITableViewData
     var items = [Item]()
     var peers = Int()
     
-    var color1 = UIColor(hexString: "#ffffff")
+    var peerID:MCPeerID!
+    var mcSession:MCSession!
+    var mcAdvertiserAssistant:MCAdvertiserAssistant!
     
+    var color1 = UIColor(hexString: "#ff5958")
+    var color2 = UIColor(hexString: "#ffffff")
+
     @IBOutlet weak var voteTableView: UITableView!
     @IBOutlet weak var voteButton: UIButton!
     
@@ -44,8 +50,10 @@ class VoteViewController: UIViewController, UITableViewDelegate, UITableViewData
         voteTableView.delegate = self
         voteTableView.dataSource = self
         
-        voteButton.isHidden = false
-        voteButton.isEnabled = true
+        self.view.backgroundColor = color2
+        voteTableView.backgroundColor = color2
+        voteButton.layer.backgroundColor = color1.cgColor
+        voteButton.setTitleColor(color2, for: .normal)
         
         if(peers > 0){
             items = DataManager.loadAll(Item.self)
@@ -62,13 +70,19 @@ class VoteViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         self.items[(indexPath?.row)!].votes += 1
         self.items[(indexPath?.row)!].saveItem()
-        
-        if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ResultViewController") as? ResultViewController
+        self.sendItem(self.items[(indexPath?.row)!])
+        self.voteTableView.reloadData()
+
+        /*if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ResultViewController") as? ResultViewController
         {
             vc.items = self.items
+            vc.peers = self.peers
             vc.modalTransitionStyle = .crossDissolve
             present(vc, animated: true, completion: nil)
-        }
+        }*/
+        
+        voteButton.isHidden = true
+        voteButton.isEnabled = false
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -77,10 +91,41 @@ class VoteViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = voteTableView.dequeueReusableCell(withIdentifier: "voteCell") as! VoteTableViewCell
-        cell.backgroundColor = color1
+        cell.backgroundColor = color2
         cell.VoteCellLabel.textColor = UIColor.black
-        cell.VoteCellLabel.text = items[indexPath.row].name
+        cell.VoteCellLabel.text = items[indexPath.row].name + " : " + String(items[indexPath.row].votes) + " votes"
         return cell
+    }
+    
+    func sendItem (_ item: Item){
+        if mcSession.connectedPeers.count > 0{
+            if let itemData = DataManager.loadData(item.itemIdentifier.uuidString){
+                do{
+                    try mcSession.send(itemData, toPeers: mcSession.connectedPeers, with: .reliable)
+                }catch{
+                    fatalError("could not send item")
+                }
+            }
+        }else{
+            print("not connected to other device")
+        }
+    }
+    
+    func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
+        do{
+            
+            let item = try JSONDecoder().decode(Item.self, from: data)
+            DataManager.save(item, with: item.itemIdentifier.uuidString)
+            
+            DispatchQueue.main.async {
+                self.items = DataManager.loadAll(Item.self)
+                self.voteTableView.reloadData()
+                print("_______________________")
+            }
+        }catch{
+            fatalError("Unable to process received data")
+        }
+        
     }
 
 }
