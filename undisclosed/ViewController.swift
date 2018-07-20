@@ -54,7 +54,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.backgroundColor = color2
         voteButton.layer.backgroundColor = color1.cgColor
         voteButton.setTitleColor(color2, for: .normal)
-        
+
     }//
     
     override func didReceiveMemoryWarning() {
@@ -68,6 +68,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     //vote button func
     @IBAction func voteButton(_ sender: Any) {
+    
         if(vote == 0){
             if(items.count < 1){
                 let actionSheet = UIAlertController(title: "ERROR", message: "You must add an item before you can vote", preferredStyle: .actionSheet)
@@ -86,17 +87,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                     self.present(actionSheet, animated: true, completion: nil)
             }
             else{
-                if mcSession.connectedPeers.count > 0{
-                    self.sendStatus(status: "vote")
+                vote = 1
+                if(mcSession.connectedPeers.count > 0){
+                    print("ENTERED")
+                    self.sendStatus("s")
                 }
             }
-            
-            vote = 1
-            
-            //hide connect and add bar button
-            connect.isEnabled = false
-            add.isEnabled = false
-            navigationBarApperance.tintColor = .clear
         }
         else{
             let indexPath = tableView.indexPathForSelectedRow
@@ -107,52 +103,53 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 self.items[(indexPath?.row)!].saveItem()
                 self.sendItem(self.items[(indexPath?.row)!])
                 self.tableView.reloadData()
+                voteButton.isEnabled = false
+                voteButton.isHidden = true
             }else{
                 print("error")
             }
+            
+            
         }
     }
     
-    func loadData(){
-        //items = [Item]()
-        items = DataManager.loadAll(Item.self)
-        self.tableView.reloadData()
-    }
     
     @objc func longPressed(sender: UILongPressGestureRecognizer) {
         
-        if sender.state == UIGestureRecognizerState.began {
+        if(vote == 0){
+            if sender.state == UIGestureRecognizerState.began {
             
-            let touchPoint = sender.location(in: self.tableView)
-            if let indexPath = tableView.indexPathForRow(at: touchPoint) {
+                let touchPoint = sender.location(in: self.tableView)
+                if let indexPath = tableView.indexPathForRow(at: touchPoint) {
                 
-                let actionSheet = UIAlertController(title: "Delete", message: "Are you sure want to delete this item?", preferredStyle: .actionSheet)
+                    let actionSheet = UIAlertController(title: "Delete", message: "Are you sure want to delete this item?", preferredStyle: .actionSheet)
                 
-                actionSheet.addAction(UIAlertAction(
-                    title: "Yes",
-                    style: .default,
-                    handler: { (action:UIAlertAction) in
-                        self.items[indexPath.row].addOrDelete = "delete"
-                        self.items[indexPath.row].saveItem()
-                        self.sendItem(self.items[indexPath.row])
-                        self.items[indexPath.row].deleteItem()
-                        self.items.remove(at: indexPath.row)
-                        self.tableView.deleteRows(at: [indexPath], with: .automatic)
-                }))
+                    actionSheet.addAction(UIAlertAction(
+                        title: "Yes",
+                        style: .default,
+                        handler: { (action:UIAlertAction) in
+                            self.items[indexPath.row].addOrDelete = "delete"
+                            self.items[indexPath.row].saveItem()
+                            self.sendItem(self.items[indexPath.row])
+                            self.items[indexPath.row].deleteItem()
+                            self.items.remove(at: indexPath.row)
+                            self.tableView.deleteRows(at: [indexPath], with: .automatic)
+                    }))
                 
-                actionSheet.addAction(UIAlertAction(
-                    title: "No",
-                    style: .default,
-                    handler: nil
-                ))
+                    actionSheet.addAction(UIAlertAction(
+                        title: "No",
+                        style: .default,
+                        handler: nil
+                    ))
                 
-                if let popoverController = actionSheet.popoverPresentationController {
-                    popoverController.sourceView = self.view
-                    popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
-                    popoverController.permittedArrowDirections = []
+                    if let popoverController = actionSheet.popoverPresentationController {
+                        popoverController.sourceView = self.view
+                        popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+                        popoverController.permittedArrowDirections = []
+                    }
+                
+                    self.present(actionSheet, animated: true, completion: nil)
                 }
-                
-                self.present(actionSheet, animated: true, completion: nil)
             }
         }
     }
@@ -161,6 +158,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     //connect button
     @IBAction func showConnectivityAction(_ sender: Any) {
+        
         let actionSheet = UIAlertController(title: "Share Item List", message: "Do you want to Host or Join a session?", preferredStyle: .actionSheet)
         
         actionSheet.addAction(UIAlertAction(
@@ -269,8 +267,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         self.create()
     }//
     
-    
-    
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
         return items.count
     }
@@ -279,7 +275,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell") as! TableViewCell
         cell.backgroundColor = color2
         cell.listLabel.textColor = UIColor.black
-        cell.listLabel.text = items[indexPath.row].name + " : " + String(items[indexPath.row].votes) + " votes"
+        if vote == 0{
+            cell.listLabel.text = items[indexPath.row].name
+        }else{
+            cell.listLabel.text = items[indexPath.row].name + " : " + String(items[indexPath.row].votes) + " votes"
+        }
         return cell
     }
     
@@ -298,17 +298,26 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
     }
     
-    func sendStatus(status : String) {
-        if mcSession.connectedPeers.count > 0 {
-            do {
-                try self.mcSession.send(status.data(using: .utf8)!, toPeers: mcSession.connectedPeers, with: .reliable)
-            }
-            catch let error {
-                print("%@", "Error for sending: \(error)")
-            }
+    func sendStatus (_ status: String){
+        if mcSession.connectedPeers.count > 0{
+                do{
+                    try mcSession.send(status.data(using: .utf8)!, toPeers: mcSession.connectedPeers, with: .reliable)
+                }catch{
+                    fatalError("could not send item")
+                }
         }
     }
+    
 
+    func loadData(){
+        items = DataManager.loadAll(Item.self)
+        self.tableView.reloadData()
+        if(vote == 0){
+            self.voteButton.isHidden = false
+            self.voteButton.isEnabled = true
+            self.vote = 1
+        }
+    }
     
     //MC Delegate functions
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
@@ -325,8 +334,15 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
+        
         do{
-            
+            print("WO")
+            let s = try JSONDecoder().decode(String.self, from: data)
+        }catch{
+            print("ERRRRRRRRROR")
+        }
+        
+        do{
             var item = try JSONDecoder().decode(Item.self, from: data)
             if(item.addOrDelete == "add"){
                 item.addOrDelete = "delete"
@@ -338,33 +354,18 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             else if(item.addOrDelete == "update"){
                 DataManager.save(item, with: item.itemIdentifier.uuidString)
             }
+            else{
+                print("WorkSSSSSSSSSS")
+            }
             
             DispatchQueue.main.async {
-                self.items = DataManager.loadAll(Item.self)
-                self.tableView.reloadData()
+                self.loadData()
             }
             
         }catch{
             print("Unable to process received data")
         }
         
-        do{
-            let status = try JSONDecoder().decode(String.self, from: data)
-            if(status == "vote"){
-                self.connect.isEnabled = false
-                self.add.isEnabled = false
-                self.navigationBarApperance.tintColor = .clear
-                self.vote = 1
-            }
-            
-            DispatchQueue.main.async {
-                self.connect.isEnabled = false
-                self.add.isEnabled = false
-                self.navigationBarApperance.tintColor = .clear
-            }
-        }catch{
-            print("Unable to process received data")
-        }
         
     }
     
