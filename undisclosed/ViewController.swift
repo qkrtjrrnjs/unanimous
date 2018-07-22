@@ -30,7 +30,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     var navigationBarApperance = UINavigationBar.appearance()
     
     //hex to UIColor
-    var color1 = UIColor(hexString: "#ff5958")
+    var color1 = UIColor(hexString: "#ff2d55")
     var color2 = UIColor(hexString: "#ffffff")
 
     override func viewDidLoad() {
@@ -52,14 +52,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.backgroundColor = color2
         voteButton.layer.backgroundColor = color1.cgColor
         voteButton.setTitleColor(color2, for: .normal)
-        
-        items = DataManager.loadAll(Item.self)
-        if(items.count != 0){
-            for i in 0...items.count{
-                items[i].deleteItem()
-            }
-        }
 
+        DataManager.clearAllFile()
     }//
     
     override func didReceiveMemoryWarning() {
@@ -95,14 +89,22 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             let indexPath = tableView.indexPathForSelectedRow
             
             if(indexPath?.row != nil){
-                self.items[(indexPath?.row)!].votes += 1
-                self.items[(indexPath?.row)!].addOrDelete = "update"
-                self.items[(indexPath?.row)!].saveItem()
-                self.sendItem(self.items[(indexPath?.row)!])
-                items.sort() { $0.votes > $1.votes }
-                self.tableView.reloadData()
-                voteButton.isEnabled = false
-                voteButton.isHidden = true
+                
+                if(mcSession.connectedPeers.count > 0){
+                    voteButton.isEnabled = false
+                    voteButton.isHidden = true
+                    self.items[(indexPath?.row)!].votes += 1
+                    self.items[(indexPath?.row)!].addOrDelete = "update"
+                    self.items[(indexPath?.row)!].saveItem()
+                    self.sendItem(self.items[(indexPath?.row)!])
+                    items.sort() { $0.votes > $1.votes }
+                    self.tableView.reloadData()
+                }
+                else{
+                    self.items[(indexPath?.row)!].votes += 1
+                    items.sort() { $0.votes > $1.votes }
+                    self.tableView.reloadData()
+                }
             }else{
                 print("error")
             }
