@@ -51,7 +51,7 @@
                                 <color key="backgroundColor" red="0.47563505172729492" green="0.47564667463302612" blue="0.47564047574996948" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <items>
                                     <navigationItem prompt="                    " id="3fs-nm-AS0">
-                                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="rbc-lT-fMq">
+                                        <barButtonItem key="rightBarButtonItem" systemItem="compose" id="rbc-lT-fMq">
                                             <connections>
                                                 <action selector="addItem:" destination="BYZ-38-t0r" id="c98-fT-9l6"/>
                                             </connections>
@@ -60,7 +60,7 @@
                                 </items>
                             </navigationBar>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uwg-mk-8kb">
-                                <rect key="frame" x="0.0" y="623" width="375" height="44"/>
+                                <rect key="frame" x="0.0" y="623" width="376" height="44"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <items>
                                     <barButtonItem systemItem="action" id="dXu-mn-1Nb">
@@ -68,16 +68,21 @@
                                             <action selector="connectivityButton:" destination="BYZ-38-t0r" id="017-GG-env"/>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem width="65" style="plain" systemItem="fixedSpace" id="7gI-Zf-VcR"/>
-                                    <barButtonItem title="Vote" id="KHt-if-qrd">
+                                    <barButtonItem width="52" style="plain" systemItem="fixedSpace" id="7gI-Zf-VcR"/>
+                                    <barButtonItem title="Item" image="like" id="KHt-if-qrd">
+                                        <inset key="imageInsets" minX="0.0" minY="1" maxX="0.0" maxY="-8"/>
                                         <connections>
                                             <action selector="voteButton:" destination="BYZ-38-t0r" id="PYc-to-sHH"/>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem width="65" style="plain" systemItem="fixedSpace" id="hgG-HB-XBB"/>
+                                    <barButtonItem width="60" style="plain" systemItem="fixedSpace" id="hgG-HB-XBB"/>
                                     <barButtonItem systemItem="edit" id="TV2-2J-FAf"/>
                                     <barButtonItem width="65" style="plain" systemItem="fixedSpace" id="4yM-Hd-7Pg"/>
-                                    <barButtonItem systemItem="trash" id="SH7-qy-OPn"/>
+                                    <barButtonItem systemItem="trash" id="SH7-qy-OPn">
+                                        <connections>
+                                            <action selector="deleteItem:" destination="BYZ-38-t0r" id="Fy9-MH-uiv"/>
+                                        </connections>
+                                    </barButtonItem>
                                 </items>
                             </toolbar>
                         </subviews>
@@ -88,6 +93,7 @@
                         <outlet property="add" destination="rbc-lT-fMq" id="MT8-Ro-tTa"/>
                         <outlet property="tableView" destination="8cu-pU-Fu6" id="owM-H8-bgJ"/>
                         <outlet property="toolbar" destination="uwg-mk-8kb" id="bBC-Z5-7FD"/>
+                        <outlet property="voteButton" destination="KHt-if-qrd" id="dTC-me-yjU"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -95,4 +101,7 @@
             <point key="canvasLocation" x="136.80000000000001" y="133.5832083958021"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="like" width="64" height="64"/>
+    </resources>
 </document>

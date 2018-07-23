@@ -40,10 +40,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.dataSource = self
         
         setupConnectivity()
-        
-        //add Long press Gesture
-        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressed(sender:)))
-        self.view.addGestureRecognizer(longPressRecognizer)
 
         //change style
         self.view.backgroundColor = color2
@@ -52,7 +48,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         navigationBarApperance.barTintColor = color1
         navigationBarApperance.tintColor = color2
         tableView.backgroundColor = color2
-
+        
         DataManager.clearAllFile()
     }//
     
@@ -61,6 +57,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         // Dispose of any resources that can be recreated.
     }//
     
+    @IBOutlet weak var voteButton: UIBarButtonItem!
     @IBOutlet weak var toolbar: UIToolbar!
     @IBOutlet weak var add: UIBarButtonItem!
     @IBOutlet weak var tableView: UITableView!
@@ -114,45 +111,37 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
     }
     
-    //handles long touch
-    @objc func longPressed(sender: UILongPressGestureRecognizer) {
+    @IBAction func deleteItem(_ sender: Any) {
+        let indexPath = tableView.indexPathForSelectedRow
+
+        let actionSheet = UIAlertController(title: "Delete", message: "Are you sure want to delete this item?", preferredStyle: .actionSheet)
         
-        if sender.state == UIGestureRecognizerState.began {
-            
-            let touchPoint = sender.location(in: self.tableView)
-            if let indexPath = tableView.indexPathForRow(at: touchPoint) {
-            
-                let actionSheet = UIAlertController(title: "Delete", message: "Are you sure want to delete this item?", preferredStyle: .actionSheet)
-                
-                actionSheet.addAction(UIAlertAction(
-                    title: "Yes",
-                    style: .default,
-                    handler: { (action:UIAlertAction) in
-                        self.items[indexPath.row].addOrDelete = "delete"
-                        self.items[indexPath.row].saveItem()
-                        self.sendItem(self.items[indexPath.row])
-                        self.items[indexPath.row].deleteItem()
-                        self.items.remove(at: indexPath.row)
-                        self.tableView.deleteRows(at: [indexPath], with: .automatic)
-                }))
-                
-                actionSheet.addAction(UIAlertAction(
-                    title: "No",
-                    style: .default,
-                    handler: nil
-                ))
-                
-                popoverPresentation(actionSheet: actionSheet)
-            }
-        }
+        actionSheet.addAction(UIAlertAction(
+            title: "Yes",
+            style: .default,
+            handler: { (action:UIAlertAction) in
+                if(indexPath?.row != nil){
+                    self.items[(indexPath?.row)!].addOrDelete = "delete"
+                    self.items[(indexPath?.row)!].saveItem()
+                    self.sendItem(self.items[(indexPath?.row)!])
+                    self.items[(indexPath?.row)!].deleteItem()
+                    self.items.remove(at: (indexPath?.row)!)
+                    self.tableView.deleteRows(at: [indexPath!], with: .automatic)
+                }
+        }))
         
+        actionSheet.addAction(UIAlertAction(
+            title: "No",
+            style: .default,
+            handler: nil
+        ))
+        
+        popoverPresentation(actionSheet: actionSheet)
     }
     
     //delete all items prior to session and reload tableview
     func deleteAll(){
-        for i in 0...items.count - 1{
-            items.remove(at: i)
-        }
+        items.removeAll()
         self.tableView.reloadData()
     }
     
@@ -268,7 +257,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         if items[indexPath.row].votes == 0{
             cell.listLabel.text = items[indexPath.row].name
         }else{
-            cell.listLabel.text = items[indexPath.row].name + " : " + String(items[indexPath.row].votes) + " votes"
+            cell.listLabel.text = items[indexPath.row].name + " : " + String(items[indexPath.row].votes) + " likes"
         }
         return cell
     }
