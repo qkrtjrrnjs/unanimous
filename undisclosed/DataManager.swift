@@ -98,6 +98,7 @@ public class DataManager{
         }
     }
     
+    //delete all files
     static func clearAllFile() {
         let fileManager = FileManager.default
         

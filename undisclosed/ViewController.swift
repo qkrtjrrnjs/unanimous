@@ -64,6 +64,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBOutlet weak var toolbar: UIToolbar!
     @IBOutlet weak var add: UIBarButtonItem!
     @IBOutlet weak var tableView: UITableView!
+    
+    //presents UIAlertControllers in popover presentation style
+    func popoverPresentation(actionSheet: UIAlertController){
+        if let popoverController = actionSheet.popoverPresentationController {
+            popoverController.sourceView = self.view
+            popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width:0, height: 0)
+            popoverController.permittedArrowDirections = []
+        }
+        self.present(actionSheet, animated: true, completion: nil)
+    }
 
     //vote button func
     @IBAction func voteButton(_ sender: Any) {
@@ -77,12 +87,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 handler: nil
             ))
         
-            if let popoverController = actionSheet.popoverPresentationController {
-                popoverController.sourceView = self.view
-                popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width:0, height: 0)
-                popoverController.permittedArrowDirections = []
-            }
-                self.present(actionSheet, animated: true, completion: nil)
+            popoverPresentation(actionSheet: actionSheet)
+            
         }
         else{
             let indexPath = tableView.indexPathForSelectedRow
@@ -108,7 +114,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
     }
     
-    
+    //handles long touch
     @objc func longPressed(sender: UILongPressGestureRecognizer) {
         
         if sender.state == UIGestureRecognizerState.began {
@@ -136,16 +142,18 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                     handler: nil
                 ))
                 
-                if let popoverController = actionSheet.popoverPresentationController {
-                    popoverController.sourceView = self.view
-                    popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
-                    popoverController.permittedArrowDirections = []
-                }
-                
-                self.present(actionSheet, animated: true, completion: nil)
+                popoverPresentation(actionSheet: actionSheet)
             }
         }
         
+    }
+    
+    //delete all items prior to session and reload tableview
+    func deleteAll(){
+        for i in 0...items.count - 1{
+            items.remove(at: i)
+        }
+        self.tableView.reloadData()
     }
     
     //host/join button
@@ -158,6 +166,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             handler: { (action:UIAlertAction) in
                 self.mcAdvertiserAssistant = MCAdvertiserAssistant(serviceType: "ysyp", discoveryInfo: nil, session: self.mcSession)
                 self.mcAdvertiserAssistant.start()
+                
+                self.deleteAll()
         }))
         
         actionSheet.addAction(UIAlertAction(
@@ -167,6 +177,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 let mcBrowser = MCBrowserViewController(serviceType: "ysyp", session: self.mcSession)
                 mcBrowser.delegate = self
                 self.present(mcBrowser, animated: true, completion: nil)
+                
         }))
         
         actionSheet.addAction(UIAlertAction(
@@ -175,13 +186,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             handler: nil
         ))
         
-        if let popoverController = actionSheet.popoverPresentationController {
-            popoverController.sourceView = self.view
-            popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
-            popoverController.permittedArrowDirections = []
-        }
-        
-        self.present(actionSheet, animated: true, completion: nil)
+        popoverPresentation(actionSheet: actionSheet)
     }
     
     func setupConnectivity(){
@@ -190,6 +195,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         mcSession.delegate = self
     }
     
+    //asks for item and adds to array
     func create(){
         //create alert controller
         let alert = UIAlertController(
@@ -219,12 +225,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                                 self.create()
                     }))
                     
-                    if let popoverController = actionSheet.popoverPresentationController {
-                        popoverController.sourceView = self.view
-                        popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
-                        popoverController.permittedArrowDirections = []
-                    }
-                    self.present(actionSheet, animated: true, completion: nil)
+                    self.popoverPresentation(actionSheet: actionSheet)
                 }else{
                     if self.mcSession.connectedPeers.count > 0{
                         newItem.saveItem()
@@ -251,7 +252,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         self.present(alert, animated: true, completion: nil)
     }
     
-    //add itme button
+    //add item button
     @IBAction func addItem(_ sender: Any) {
         self.create()
     }//
@@ -272,6 +273,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         return cell
     }
     
+    //sends item to connected peers
     func sendItem (_ item: Item){
         if mcSession.connectedPeers.count > 0{
             if let itemData = DataManager.loadData(item.itemIdentifier.uuidString){
@@ -286,6 +288,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
     }
 
+    //method called Asynchronously
     func loadData(){
         items = DataManager.loadAll(Item.self)
         items.sort() { $0.votes > $1.votes }
@@ -297,6 +300,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         switch state {
         case MCSessionState.connected:
             print("Connected: \(peerID.displayName)")
+            self.deleteAll()
             
         case MCSessionState.connecting:
             print("Connecting: \(peerID.displayName)")
@@ -306,6 +310,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
     }
     
+    //handles received data
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
         do{
             var item = try JSONDecoder().decode(Item.self, from: data)
