@@ -19,7 +19,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="70" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="8cu-pU-Fu6">
-                                <rect key="frame" x="0.0" y="79" width="375" height="530"/>
+                                <rect key="frame" x="0.0" y="79" width="375" height="544"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
@@ -51,11 +51,6 @@
                                 <color key="backgroundColor" red="0.47563505172729492" green="0.47564667463302612" blue="0.47564047574996948" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <items>
                                     <navigationItem prompt="                    " id="3fs-nm-AS0">
-                                        <barButtonItem key="leftBarButtonItem" systemItem="action" id="kSM-ho-bFs">
-                                            <connections>
-                                                <action selector="showConnectivityAction:" destination="BYZ-38-t0r" id="Oir-Gp-9oq"/>
-                                            </connections>
-                                        </barButtonItem>
                                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="rbc-lT-fMq">
                                             <connections>
                                                 <action selector="addItem:" destination="BYZ-38-t0r" id="c98-fT-9l6"/>
@@ -64,32 +59,35 @@
                                     </navigationItem>
                                 </items>
                             </navigationBar>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Rsj-cD-H7S">
-                                <rect key="frame" x="137" y="617" width="100" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <color key="backgroundColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="deviceRGB"/>
-                                <color key="tintColor" red="0.2408578992" green="0.67386782170000004" blue="1" alpha="1" colorSpace="deviceRGB"/>
-                                <state key="normal" title="vote">
-                                    <color key="titleShadowColor" red="0.40000000000000002" green="0.40000000000000002" blue="0.59999999999999998" alpha="1" colorSpace="calibratedRGB"/>
-                                </state>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                        <integer key="value" value="15"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
-                                <connections>
-                                    <action selector="voteButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="vSh-3h-Aa7"/>
-                                </connections>
-                            </button>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uwg-mk-8kb">
+                                <rect key="frame" x="0.0" y="623" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                <items>
+                                    <barButtonItem systemItem="action" id="dXu-mn-1Nb">
+                                        <connections>
+                                            <action selector="connectivityButton:" destination="BYZ-38-t0r" id="017-GG-env"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem width="65" style="plain" systemItem="fixedSpace" id="7gI-Zf-VcR"/>
+                                    <barButtonItem title="Vote" id="KHt-if-qrd">
+                                        <connections>
+                                            <action selector="voteButton:" destination="BYZ-38-t0r" id="PYc-to-sHH"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem width="65" style="plain" systemItem="fixedSpace" id="hgG-HB-XBB"/>
+                                    <barButtonItem systemItem="edit" id="TV2-2J-FAf"/>
+                                    <barButtonItem width="65" style="plain" systemItem="fixedSpace" id="4yM-Hd-7Pg"/>
+                                    <barButtonItem systemItem="trash" id="SH7-qy-OPn"/>
+                                </items>
+                            </toolbar>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
                         <outlet property="add" destination="rbc-lT-fMq" id="MT8-Ro-tTa"/>
-                        <outlet property="connect" destination="kSM-ho-bFs" id="f2j-pz-spt"/>
                         <outlet property="tableView" destination="8cu-pU-Fu6" id="owM-H8-bgJ"/>
-                        <outlet property="voteButton" destination="Rsj-cD-H7S" id="UJR-Uh-JgC"/>
+                        <outlet property="toolbar" destination="uwg-mk-8kb" id="bBC-Z5-7FD"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

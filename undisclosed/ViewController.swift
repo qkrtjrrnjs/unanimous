@@ -47,11 +47,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
         //change style
         self.view.backgroundColor = color2
+        toolbar.barTintColor = color1
+        toolbar.tintColor = color2
         navigationBarApperance.barTintColor = color1
         navigationBarApperance.tintColor = color2
         tableView.backgroundColor = color2
-        voteButton.layer.backgroundColor = color1.cgColor
-        voteButton.setTitleColor(color2, for: .normal)
 
         DataManager.clearAllFile()
     }//
@@ -61,9 +61,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         // Dispose of any resources that can be recreated.
     }//
     
+    @IBOutlet weak var toolbar: UIToolbar!
     @IBOutlet weak var add: UIBarButtonItem!
-    @IBOutlet weak var connect: UIBarButtonItem!
-    @IBOutlet weak var voteButton: UIButton!
     @IBOutlet weak var tableView: UITableView!
 
     //vote button func
@@ -91,8 +90,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             if(indexPath?.row != nil){
                 
                 if(mcSession.connectedPeers.count > 0){
-                    voteButton.isEnabled = false
-                    voteButton.isHidden = true
                     self.items[(indexPath?.row)!].votes += 1
                     self.items[(indexPath?.row)!].addOrDelete = "update"
                     self.items[(indexPath?.row)!].saveItem()
@@ -151,9 +148,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
     }
     
-    //connect button
-    @IBAction func showConnectivityAction(_ sender: Any) {
-        
+    //host/join button
+    @IBAction func connectivityButton(_ sender: Any) {
         let actionSheet = UIAlertController(title: "Share Item List", message: "Do you want to Host or Join a session?", preferredStyle: .actionSheet)
         
         actionSheet.addAction(UIAlertAction(
