@@ -23,6 +23,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     var items = [Item]()
     
+    var voted = false
+    
     var peerID:MCPeerID!
     var mcSession:MCSession!
     var mcAdvertiserAssistant:MCAdvertiserAssistant!
@@ -72,66 +74,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         self.present(actionSheet, animated: true, completion: nil)
     }
 
-    //vote button func
-    @IBAction func voteButton(_ sender: Any) {
-    
-        if(items.count < 1){
-            let actionSheet = UIAlertController(title: "ERROR", message: "No items to vote on", preferredStyle: .actionSheet)
-            
-            actionSheet.addAction(UIAlertAction(
-                title: "OK",
-                style: .default,
-                handler: nil
-            ))
-        
-            popoverPresentation(actionSheet: actionSheet)
-            
-        }
-        else{
-            let indexPath = tableView.indexPathForSelectedRow
-            
-            if(indexPath?.row != nil){
-                
-                if(mcSession.connectedPeers.count > 0){
-                    self.items[(indexPath?.row)!].votes += 1
-                    self.items[(indexPath?.row)!].addOrDelete = "update"
-                    self.items[(indexPath?.row)!].saveItem()
-                    self.sendItem(self.items[(indexPath?.row)!])
-                    items.sort() { $0.votes > $1.votes }
-                    self.tableView.reloadData()
-                }
-                else{
-                    self.items[(indexPath?.row)!].votes += 1
-                    items.sort() { $0.votes > $1.votes }
-                    self.tableView.reloadData()
-                }
-            }else{
-                print("error")
-            }
-        }
-    }
-    
-    @IBAction func deleteItem(_ sender: Any) {
-        let indexPath = tableView.indexPathForSelectedRow
-
-        let actionSheet = UIAlertController(title: "Delete", message: "Are you sure want to delete this item?", preferredStyle: .actionSheet)
+    func createAlert(title:String, message: String){
+        let actionSheet = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
         
         actionSheet.addAction(UIAlertAction(
-            title: "Yes",
-            style: .default,
-            handler: { (action:UIAlertAction) in
-                if(indexPath?.row != nil){
-                    self.items[(indexPath?.row)!].addOrDelete = "delete"
-                    self.items[(indexPath?.row)!].saveItem()
-                    self.sendItem(self.items[(indexPath?.row)!])
-                    self.items[(indexPath?.row)!].deleteItem()
-                    self.items.remove(at: (indexPath?.row)!)
-                    self.tableView.deleteRows(at: [indexPath!], with: .automatic)
-                }
-        }))
-        
-        actionSheet.addAction(UIAlertAction(
-            title: "No",
+            title: "OK",
             style: .default,
             handler: nil
         ))
@@ -139,10 +86,114 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         popoverPresentation(actionSheet: actionSheet)
     }
     
+    //adds and saves created items
+    @IBAction func voteButton(_ sender: Any) {
+    
+        if(items.count < 1){
+            createAlert(title: "Error", message: "No items to vote on!")
+        }
+        else{
+            let indexPath = tableView.indexPathForSelectedRow
+            
+            if(indexPath?.row != nil){
+                
+                if(mcSession.connectedPeers.count > 0){
+                    if(!voted){
+                        self.items[(indexPath?.row)!].votes += 1
+                        self.items[(indexPath?.row)!].addOrDelete = "add"
+                        self.items[(indexPath?.row)!].saveItem()
+                        self.sendItem(self.items[(indexPath?.row)!])
+                        items.sort() { $0.votes > $1.votes }
+                        self.tableView.reloadData()
+                        voted = true
+                    }else{
+                        createAlert(title: "ERROR", message: "You have already voted!")
+                    }
+                }
+                else{
+                    self.items[(indexPath?.row)!].votes += 1
+                    items.sort() { $0.votes > $1.votes }
+                    self.tableView.reloadData()
+                }
+            }else{
+                createAlert(title: "Error", message: "No item is selected!")
+            }
+        }
+    }
+    
+    //edits items.name
+    @IBAction func editButton(_ sender: Any) {
+        
+        if(items.count > 0){
+            let indexPath = self.tableView.indexPathForSelectedRow
+        
+            if(indexPath?.row != nil){
+                let alert = UIAlertController(title: "", message: "Edit List Item", preferredStyle: .alert)
+                alert.addTextField{
+                    (textfield: UITextField) in textfield.placeholder = self.items[(indexPath?.row)!].name
+                }
+            
+                alert.addAction(UIAlertAction(title: "Update", style: .default, handler: { (updateAction) in
+                    self.items[(indexPath?.row)!].name = alert.textFields!.first!.text!
+                    self.items[(indexPath?.row)!].addOrDelete = "add"
+                    self.items[(indexPath?.row)!].saveItem()
+                    self.sendItem(self.items[(indexPath?.row)!])
+                    self.items.sort() { $0.votes > $1.votes }
+                    self.tableView.reloadRows(at: [indexPath!], with: .fade)
+                }))
+                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+                self.present(alert, animated: false)
+            }else{
+                createAlert(title: "ERROR", message: "No item is selected!")
+            }
+        }else{
+            createAlert(title: "ERROR", message: "No items to edit!")
+        }
+        
+    }
+    
+    //deletes selected item
+    @IBAction func deleteItem(_ sender: Any) {
+        
+        if(items.count > 0){
+            let indexPath = tableView.indexPathForSelectedRow
+            
+            if(indexPath?.row != nil){
+                let actionSheet = UIAlertController(title: "Delete", message: "Are you sure want to delete this item?", preferredStyle: .actionSheet)
+        
+                actionSheet.addAction(UIAlertAction(
+                    title: "Yes",
+                    style: .default,
+                    handler: { (action:UIAlertAction) in
+                        if(indexPath?.row != nil){
+                            self.items[(indexPath?.row)!].addOrDelete = "delete"
+                            self.items[(indexPath?.row)!].saveItem()
+                            self.sendItem(self.items[(indexPath?.row)!])
+                            self.items[(indexPath?.row)!].deleteItem()
+                            self.items.remove(at: (indexPath?.row)!)
+                            self.tableView.deleteRows(at: [indexPath!], with: .automatic)
+                        }
+                }))
+        
+                    actionSheet.addAction(UIAlertAction(
+                        title: "No",
+                        style: .default,
+                        handler: nil
+                    ))
+        
+                popoverPresentation(actionSheet: actionSheet)
+            }else{
+                createAlert(title: "ERROR", message: "No item is selected!")
+            }
+        }else{
+            createAlert(title: "ERROR", message: "No items to delete!")
+        }
+    }
+    
     //delete all items prior to session and reload tableview
     func deleteAll(){
         items.removeAll()
-        self.tableView.reloadData()
+        tableView.reloadData()
     }
     
     //host/join button
@@ -205,7 +256,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 guard let name = alert.textFields?.first?.text else {return}
                 let newItem = Item(name: name, itemIdentifier: UUID(), addOrDelete: "add", votes: 0)
                 if name == ""{
-                    let actionSheet = UIAlertController(title: "ERROR", message: "Nothing was entered", preferredStyle: .actionSheet)
+                    let actionSheet = UIAlertController(title: "ERROR", message: "Nothing was entered!", preferredStyle: .actionSheet)
                  
                     actionSheet.addAction(UIAlertAction(
                         title: "OK",
@@ -228,7 +279,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                         self.tableView.reloadData()
                     }
                 }
-        }
+            }
         ))
         
         //add cancel btn
@@ -309,9 +360,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             }
             else if(item.addOrDelete == "delete"){
                 DataManager.delete(item.itemIdentifier.uuidString)
-            }
-            else if(item.addOrDelete == "update"){
-                DataManager.save(item, with: item.itemIdentifier.uuidString)
             }
             
             DispatchQueue.main.async {

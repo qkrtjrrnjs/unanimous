@@ -76,7 +76,11 @@
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem width="60" style="plain" systemItem="fixedSpace" id="hgG-HB-XBB"/>
-                                    <barButtonItem systemItem="edit" id="TV2-2J-FAf"/>
+                                    <barButtonItem systemItem="edit" id="TV2-2J-FAf">
+                                        <connections>
+                                            <action selector="editButton:" destination="BYZ-38-t0r" id="XzH-pk-1lr"/>
+                                        </connections>
+                                    </barButtonItem>
                                     <barButtonItem width="65" style="plain" systemItem="fixedSpace" id="4yM-Hd-7Pg"/>
                                     <barButtonItem systemItem="trash" id="SH7-qy-OPn">
                                         <connections>
