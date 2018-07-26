@@ -110,7 +110,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     //handles votes
     @IBAction func voteButton(_ sender: Any) {
         if(showResult){
-            createAlert(title: "ERROR", message: "Start a new voting session!")
+            createAlert(title: "Error", message: "Start a new voting session!")
         }else{
             if(items.count < 1){
                 createAlert(title: "Error", message: "No items to vote on!")
@@ -132,7 +132,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                             endButton.tintColor = color2
                             endButton.isEnabled = true
                         }else{
-                            createAlert(title: "ERROR", message: "You have already voted!")
+                            createAlert(title: "Error", message: "You have already voted!")
                         }
                     }
                     else{
@@ -152,7 +152,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBAction func editButton(_ sender: Any) {
         
         if(showResult){
-            createAlert(title: "ERROR", message: "start a new voting session!")
+            createAlert(title: "Error", message: "start a new voting session!")
         }else{
             if(items.count > 0){
                 let indexPath = self.tableView.indexPathForSelectedRow
@@ -181,10 +181,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                     alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
                     self.present(alert, animated: false)
                 }else{
-                    createAlert(title: "ERROR", message: "No item is selected!")
+                    createAlert(title: "Error", message: "No item is selected!")
                 }
             }else{
-                createAlert(title: "ERROR", message: "No items to edit!")
+                createAlert(title: "Error", message: "No items to edit!")
             }
         }
     
@@ -194,7 +194,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBAction func deleteItem(_ sender: Any) {
         
         if(showResult){
-            createAlert(title: "ERROR", message: "Start a new voting session!")
+            createAlert(title: "Error", message: "Start a new voting session!")
         }else{
             if(items.count > 0){
                 let indexPath = tableView.indexPathForSelectedRow
@@ -224,10 +224,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                     
                     popoverPresentation(actionSheet: actionSheet)
                 }else{
-                    createAlert(title: "ERROR", message: "No item is selected!")
+                    createAlert(title: "Error", message: "Please selected an item!")
                 }
             }else{
-                createAlert(title: "ERROR", message: "No items to delete!")
+                createAlert(title: "Error", message: "There are no items to delete!")
             }
         }
         
@@ -235,7 +235,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     //host/join button
     @IBAction func connectivityButton(_ sender: Any) {
-        let actionSheet = UIAlertController(title: "Share Item List", message: "Do you want to Host or Join a session?", preferredStyle: .actionSheet)
+        let actionSheet = UIAlertController(title: "Connect", message: "Do you want to Host or Join a session?", preferredStyle: .actionSheet)
         
         actionSheet.addAction(UIAlertAction(
             title: "Host Session",
@@ -248,6 +248,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 self.deleteAll()
                 self.mcSession.disconnect()
                 self.voted = false
+                self.endButton.tintColor = self.color2
+                self.endButton.isEnabled = true
         }))
         
         actionSheet.addAction(UIAlertAction(
@@ -259,9 +261,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 self.present(mcBrowser, animated: true, completion: nil)
                 DataManager.clearAllFile()
                 self.deleteAll()
-                self.navBarTitle.text = "UNDISCLOSED"
+                self.navBarTitle.text = "UNANIMOUS"
                 self.mcSession.disconnect()
                 self.voted = false
+                self.endButton.tintColor = .clear
+                self.endButton.isEnabled = false
         }))
         
         actionSheet.addAction(UIAlertAction(
@@ -300,7 +304,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 guard let name = alert.textFields?.first?.text else {return}
                 let newItem = Item(name: name, itemIdentifier: UUID(), addOrDelete: "add", votes: 0)
                 if name == ""{
-                    let actionSheet = UIAlertController(title: "ERROR", message: "Nothing was entered!", preferredStyle: .actionSheet)
+                    let actionSheet = UIAlertController(title: "Error", message: "Nothing was entered!", preferredStyle: .actionSheet)
                  
                     actionSheet.addAction(UIAlertAction(
                         title: "OK",
@@ -365,7 +369,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                     self.mcSession.disconnect()
                     self.endButton.tintColor = .clear
                     self.endButton.isEnabled = false
-                    self.navBarTitle.text = "UNDISCLOSED"
+                    self.navBarTitle.text = "UNANIMOUS"
                     self.voted = false
             }))
             
@@ -392,9 +396,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                     self.tableView.reloadData()
                     self.endButton.tintColor = .clear
                     self.endButton.isEnabled = false
-                    self.navBarTitle.text = "UNDISCLOSED"
+                    self.navBarTitle.text = "UNANIMOUS"
                     self.voted = false
-                    
             }))
             
             actionSheet.addAction(UIAlertAction(
@@ -418,14 +421,28 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         if(mcSession.connectedPeers.count > 0){
             if items[indexPath.row].votes == 0{
                 cell.listLabel.text = items[indexPath.row].name
+                cell.listLabel.font = UIFont(name: "BloggerSans-Medium", size: cell.listLabel.font.pointSize)
             }else{
-                cell.listLabel.text = items[indexPath.row].name + " : " + String(items[indexPath.row].votes) + " likes"
+                if(items[indexPath.row].votes == 1){
+                    cell.listLabel.text = items[indexPath.row].name + " : " + String(items[indexPath.row].votes) + " like"
+                    cell.listLabel.font = UIFont(name: "BloggerSans-Medium", size: cell.listLabel.font.pointSize)
+                }else{
+                    cell.listLabel.text = items[indexPath.row].name + " : " + String(items[indexPath.row].votes) + " likes"
+                    cell.listLabel.font = UIFont(name: "BloggerSans-Medium", size: cell.listLabel.font.pointSize)
+                }
             }
         }else{
             if(!showResult){
                 cell.listLabel.text = items[indexPath.row].name
+                cell.listLabel.font = UIFont(name: "BloggerSans-Medium", size: cell.listLabel.font.pointSize)
             }else{
-                cell.listLabel.text = items[indexPath.row].name + " : " + String(items[indexPath.row].votes) + " likes"
+                if(items[indexPath.row].votes == 1){
+                    cell.listLabel.text = items[indexPath.row].name + " : " + String(items[indexPath.row].votes) + " like"
+                    cell.listLabel.font = UIFont(name: "BloggerSans-Medium", size: cell.listLabel.font.pointSize)
+                }else{
+                    cell.listLabel.text = items[indexPath.row].name + " : " + String(items[indexPath.row].votes) + " likes"
+                    cell.listLabel.font = UIFont(name: "BloggerSans-Medium", size: cell.listLabel.font.pointSize)
+                }
             }
         }
         return cell

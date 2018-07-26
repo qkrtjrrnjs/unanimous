@@ -15,6 +15,14 @@
 		83385FA320D738A3000BAA9B /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83385FA220D738A3000BAA9B /* Item.swift */; };
 		83385FA520D738FE000BAA9B /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83385FA420D738FE000BAA9B /* DataManager.swift */; };
 		835BF9AC20F6E369003C01D1 /* hexToUIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835BF9AB20F6E369003C01D1 /* hexToUIColor.swift */; };
+		837C8C182109680C0062D653 /* Blogger Sans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 837C8C102109680A0062D653 /* Blogger Sans-Bold.ttf */; };
+		837C8C192109680C0062D653 /* Blogger Sans.ttf.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 837C8C112109680A0062D653 /* Blogger Sans.ttf.ttf */; };
+		837C8C1A2109680C0062D653 /* Blogger Sans-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 837C8C122109680A0062D653 /* Blogger Sans-Medium.ttf */; };
+		837C8C1B2109680C0062D653 /* Blogger Sans-Light Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 837C8C132109680B0062D653 /* Blogger Sans-Light Italic.ttf */; };
+		837C8C1C2109680C0062D653 /* Blogger Sans-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 837C8C142109680B0062D653 /* Blogger Sans-Light.ttf */; };
+		837C8C1D2109680C0062D653 /* Blogger Sans-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 837C8C152109680B0062D653 /* Blogger Sans-Italic.ttf */; };
+		837C8C1E2109680C0062D653 /* Blogger Sans-Bold Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 837C8C162109680B0062D653 /* Blogger Sans-Bold Italic.ttf */; };
+		837C8C1F2109680C0062D653 /* Blogger Sans-Medium Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 837C8C172109680C0062D653 /* Blogger Sans-Medium Italic.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +36,14 @@
 		83385FA220D738A3000BAA9B /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		83385FA420D738FE000BAA9B /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		835BF9AB20F6E369003C01D1 /* hexToUIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = hexToUIColor.swift; sourceTree = "<group>"; };
+		837C8C102109680A0062D653 /* Blogger Sans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Blogger Sans-Bold.ttf"; sourceTree = "<group>"; };
+		837C8C112109680A0062D653 /* Blogger Sans.ttf.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Blogger Sans.ttf.ttf"; sourceTree = "<group>"; };
+		837C8C122109680A0062D653 /* Blogger Sans-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Blogger Sans-Medium.ttf"; sourceTree = "<group>"; };
+		837C8C132109680B0062D653 /* Blogger Sans-Light Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Blogger Sans-Light Italic.ttf"; sourceTree = "<group>"; };
+		837C8C142109680B0062D653 /* Blogger Sans-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Blogger Sans-Light.ttf"; sourceTree = "<group>"; };
+		837C8C152109680B0062D653 /* Blogger Sans-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Blogger Sans-Italic.ttf"; sourceTree = "<group>"; };
+		837C8C162109680B0062D653 /* Blogger Sans-Bold Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Blogger Sans-Bold Italic.ttf"; sourceTree = "<group>"; };
+		837C8C172109680C0062D653 /* Blogger Sans-Medium Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Blogger Sans-Medium Italic.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,10 +83,26 @@
 				83385FA420D738FE000BAA9B /* DataManager.swift */,
 				83385F9020CF549B000BAA9B /* Main.storyboard */,
 				83385F9320CF549C000BAA9B /* Assets.xcassets */,
+				837C8C0F210967C30062D653 /* fonts */,
 				83385F9520CF549D000BAA9B /* LaunchScreen.storyboard */,
 				83385F9820CF549D000BAA9B /* Info.plist */,
 			);
 			path = undisclosed;
+			sourceTree = "<group>";
+		};
+		837C8C0F210967C30062D653 /* fonts */ = {
+			isa = PBXGroup;
+			children = (
+				837C8C162109680B0062D653 /* Blogger Sans-Bold Italic.ttf */,
+				837C8C102109680A0062D653 /* Blogger Sans-Bold.ttf */,
+				837C8C152109680B0062D653 /* Blogger Sans-Italic.ttf */,
+				837C8C132109680B0062D653 /* Blogger Sans-Light Italic.ttf */,
+				837C8C142109680B0062D653 /* Blogger Sans-Light.ttf */,
+				837C8C172109680C0062D653 /* Blogger Sans-Medium Italic.ttf */,
+				837C8C122109680A0062D653 /* Blogger Sans-Medium.ttf */,
+				837C8C112109680A0062D653 /* Blogger Sans.ttf.ttf */,
+			);
+			path = fonts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -133,7 +165,15 @@
 			files = (
 				83385F9720CF549D000BAA9B /* LaunchScreen.storyboard in Resources */,
 				83385F9420CF549C000BAA9B /* Assets.xcassets in Resources */,
+				837C8C1A2109680C0062D653 /* Blogger Sans-Medium.ttf in Resources */,
+				837C8C1B2109680C0062D653 /* Blogger Sans-Light Italic.ttf in Resources */,
+				837C8C182109680C0062D653 /* Blogger Sans-Bold.ttf in Resources */,
+				837C8C1D2109680C0062D653 /* Blogger Sans-Italic.ttf in Resources */,
+				837C8C192109680C0062D653 /* Blogger Sans.ttf.ttf in Resources */,
+				837C8C1C2109680C0062D653 /* Blogger Sans-Light.ttf in Resources */,
+				837C8C1F2109680C0062D653 /* Blogger Sans-Medium Italic.ttf in Resources */,
 				83385F9220CF549B000BAA9B /* Main.storyboard in Resources */,
+				837C8C1E2109680C0062D653 /* Blogger Sans-Bold Italic.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
