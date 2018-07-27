@@ -5,10 +5,12 @@
   - Anonymous voting application revamped version 
 
 ### FEATURES
-  - Transfering data (candidates) using multipeer connectivty
-  - Two ways of choosing the winner from the candidates 
-    - randomly (Using prize wheel/spinner)
-    - by voting 
+  - Transfering data between users (items) using the multipeer connectivty framework
+  - single device voting
   
 ### MOCKUP 
   - https://www.figma.com/file/YszrkvKtYYPiAgUEj2xfNgGa/Undisclosed-HOST
+
+### PRODUCT 
+  - https://itunes.apple.com/us/app/unanimous/id1138224169?platform=iphone&preserveScrollPosition=true#platform/iphone
+
