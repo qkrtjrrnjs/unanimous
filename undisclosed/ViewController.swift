@@ -35,6 +35,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     //hex to UIColor
     var color1 = UIColor(hexString: "#ff2d55")
     var color2 = UIColor(hexString: "#ffffff")
+    
+    //referencing outlets
+    @IBOutlet weak var navBarTitle: UILabel!
+    @IBOutlet weak var endButton: UIBarButtonItem!
+    @IBOutlet weak var voteButton: UIBarButtonItem!
+    @IBOutlet weak var toolbar: UIToolbar!
+    @IBOutlet weak var add: UIBarButtonItem!
+    @IBOutlet weak var tableView: UITableView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -63,13 +71,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }//
-    
-    @IBOutlet weak var navBarTitle: UILabel!
-    @IBOutlet weak var endButton: UIBarButtonItem!
-    @IBOutlet weak var voteButton: UIBarButtonItem!
-    @IBOutlet weak var toolbar: UIToolbar!
-    @IBOutlet weak var add: UIBarButtonItem!
-    @IBOutlet weak var tableView: UITableView!
     
     //presents UIAlertControllers in popover presentation style
     func popoverPresentation(actionSheet: UIAlertController){
@@ -412,6 +413,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
         return items.count
+    }
+    
+    func customCell(cell: TableViewCell, indexPath: IndexPath){
+        
     }
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell{
