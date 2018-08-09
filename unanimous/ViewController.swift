@@ -26,7 +26,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     var host = false
     var voted = false
-
+    var prevVote = UUID()
+    
     var peerID:MCPeerID!
     var mcSession:MCSession!
     var mcAdvertiserAssistant:MCAdvertiserAssistant!
@@ -163,8 +164,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         if(indexPath?.row != nil){
             if(!voted){
+                prevVote = self.items[(indexPath?.row)!].itemIdentifier
                 self.items[(indexPath?.row)!].votes += 1
-                self.items[(indexPath?.row)!].addOrDelete = "add"
                 self.items[(indexPath?.row)!].saveItem()
                 self.sendItem(self.items[(indexPath?.row)!])
                 items.sort() { $0.votes > $1.votes }
@@ -173,8 +174,41 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 endButton.tintColor = color2
                 endButton.isEnabled = true
             }else{
-//                
-                createAlert(title: "Error", message: "You have already voted!")
+                let actionSheet = UIAlertController(title: "Warning", message: "You have already voted, are you sure you want to change your vote?", preferredStyle: .actionSheet)
+                
+                actionSheet.addAction(UIAlertAction(
+                    title: "Yes",
+                    style: .default,
+                    handler: { (action:UIAlertAction) in
+                        //removing previous vote
+                        for i in 0..<self.items.count{
+                            if self.items[i].itemIdentifier == self.prevVote{
+                                self.items[i].votes -= 1
+                                self.items[i].saveItem()
+                                self.sendItem(self.items[i])
+                                break
+                            }
+                        }
+                        self.items.sort() { $0.votes > $1.votes }
+                        self.tableView.reloadData()
+                        
+                        //casting new vote
+                        self.prevVote = self.items[(indexPath?.row)!].itemIdentifier
+                        self.items[(indexPath?.row)!].votes += 1
+                        self.items[(indexPath?.row)!].saveItem()
+                        self.sendItem(self.items[(indexPath?.row)!])
+                        
+                        self.items.sort() { $0.votes > $1.votes }
+                        self.tableView.reloadData()
+                }))
+                
+                actionSheet.addAction(UIAlertAction(
+                    title: "No",
+                    style: .default,
+                    handler: nil
+                ))
+                
+                popoverPresentation(actionSheet: actionSheet)
             }
         }else{
             createAlert(title: "Error", message: "No item is selected!")
@@ -186,8 +220,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         if(indexPath?.row != nil){
             if(!voted){
+                prevVote = self.items[(indexPath?.row)!].itemIdentifier
                 self.items[(indexPath?.row)!].votes += 1
-                self.items[(indexPath?.row)!].addOrDelete = "add"
                 self.items[(indexPath?.row)!].saveItem()
                 self.sendItem(self.items[(indexPath?.row)!])
                 items.sort() { $0.votes > $1.votes }
@@ -196,7 +230,41 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 endButton.tintColor = color2
                 endButton.isEnabled = true
             }else{
-                createAlert(title: "Error", message: "You have already voted!")
+                let actionSheet = UIAlertController(title: "Warning", message: "You have already voted, are you sure you want to change your vote?", preferredStyle: .actionSheet)
+                
+                actionSheet.addAction(UIAlertAction(
+                    title: "Yes",
+                    style: .default,
+                    handler: { (action:UIAlertAction) in
+                        //removing previous vote
+                        for i in 0..<self.items.count{
+                            if self.items[i].itemIdentifier == self.prevVote{
+                                self.items[i].votes -= 1
+                                self.items[i].saveItem()
+                                self.sendItem(self.items[i])
+                                break
+                            }
+                        }
+                        self.items.sort() { $0.votes > $1.votes }
+                        self.tableView.reloadData()
+                        
+                        //casting new vote
+                        self.prevVote = self.items[(indexPath?.row)!].itemIdentifier
+                        self.items[(indexPath?.row)!].votes += 1
+                        self.items[(indexPath?.row)!].saveItem()
+                        self.sendItem(self.items[(indexPath?.row)!])
+                        
+                        self.items.sort() { $0.votes > $1.votes }
+                        self.tableView.reloadData()
+                }))
+                
+                actionSheet.addAction(UIAlertAction(
+                    title: "No",
+                    style: .default,
+                    handler: nil
+                ))
+                
+                popoverPresentation(actionSheet: actionSheet)
             }
         }else{
             createAlert(title: "Error", message: "No item is selected!")
@@ -217,7 +285,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 
                 alert.addAction(UIAlertAction(title: "Update", style: .default, handler: { (updateAction) in
                     self.items[(indexPath?.row)!].name = alert.textFields!.first!.text!
-                    self.items[(indexPath?.row)!].addOrDelete = "add"
                     self.items[(indexPath?.row)!].saveItem()
                     self.sendItem(self.items[(indexPath?.row)!])
                     self.items.sort() { $0.votes > $1.votes }
@@ -489,7 +556,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         do{
             let item = try JSONDecoder().decode(Item.self, from: data)
             if(item.addOrDelete == "add"){
-                //item.addOrDelete = "delete"
                 DataManager.save(item, with: item.itemIdentifier.uuidString)
             }
             else if(item.addOrDelete == "delete"){
