@@ -465,6 +465,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                     newItem.saveItem()
                     self.items.append(newItem)
                     self.sendItem(newItem)
+                    self.mcAdvertiserAssistant.stop()
                 }
                 self.deleteAll()
                 DataManager.clearAllFile()
