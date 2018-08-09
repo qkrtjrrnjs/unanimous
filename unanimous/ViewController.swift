@@ -8,6 +8,7 @@
 import UIKit
 import MultipeerConnectivity
 
+
 class TableViewCell: UITableViewCell {
     
     @IBOutlet weak var listLabel: UILabel!
@@ -23,9 +24,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     var items = [Item]()
     
+    var host = false
     var voted = false
-    var showResult = false
-    
+
     var peerID:MCPeerID!
     var mcSession:MCSession!
     var mcAdvertiserAssistant:MCAdvertiserAssistant!
@@ -40,9 +41,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBOutlet weak var navBarTitle: UILabel!
     @IBOutlet weak var endButton: UIBarButtonItem!
     @IBOutlet weak var voteButton: UIBarButtonItem!
+    @IBOutlet weak var voteButton2: UIBarButtonItem!
     @IBOutlet weak var toolbar: UIToolbar!
     @IBOutlet weak var add: UIBarButtonItem!
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var toolbar2: UIToolbar!
+    
+    var logoButton = UIBarButtonItem()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,6 +56,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.dataSource = self
         
         setupConnectivity()
+        
+        //add Long press Gesture
+        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressed(sender:)))
+        self.view.addGestureRecognizer(longPressRecognizer)
 
         //change style
         self.view.backgroundColor = color2
@@ -63,14 +72,54 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         navBarTitle.textAlignment = .center
         endButton.tintColor = .clear
         endButton.isEnabled = false
+        toolbar2.isHidden = true
+        toolbar2.barTintColor = color1
+        toolbar2.tintColor = color2
         
         DataManager.clearAllFile()
     }//
+    
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }//
+    
+    @objc func longPressed(sender: UILongPressGestureRecognizer) {
+        
+        if sender.state == UIGestureRecognizerState.began {
+            
+            let touchPoint = sender.location(in: self.tableView)
+            if let indexPath = tableView.indexPathForRow(at: touchPoint) {
+                
+                let actionSheet = UIAlertController(title: "Share", message: "Are you sure you want to share this item?", preferredStyle: .actionSheet)
+                
+                actionSheet.addAction(UIAlertAction(
+                    title: "Yes",
+                    style: .default,
+                    handler: { (action:UIAlertAction) in
+                        self.sendItem(self.items[indexPath.row])
+                        
+                }))
+                
+                actionSheet.addAction(UIAlertAction(
+                    title: "No",
+                    style: .default,
+                    handler: nil
+                ))
+                
+                if let popoverController = actionSheet.popoverPresentationController {
+                    popoverController.sourceView = self.view
+                    popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+                    popoverController.permittedArrowDirections = []
+                }
+                
+                self.present(actionSheet, animated: true, completion: nil)
+                popoverPresentation(actionSheet: actionSheet)
+            }
+        }
+        
+    }
     
     //presents UIAlertControllers in popover presentation style
     func popoverPresentation(actionSheet: UIAlertController){
@@ -110,83 +159,76 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     //handles votes
     @IBAction func voteButton(_ sender: Any) {
-        if(showResult){
-            createAlert(title: "Error", message: "Start a new voting session!")
+        let indexPath = tableView.indexPathForSelectedRow
+        
+        if(indexPath?.row != nil){
+            if(!voted){
+                self.items[(indexPath?.row)!].votes += 1
+                self.items[(indexPath?.row)!].addOrDelete = "add"
+                self.items[(indexPath?.row)!].saveItem()
+                self.sendItem(self.items[(indexPath?.row)!])
+                items.sort() { $0.votes > $1.votes }
+                self.tableView.reloadData()
+                voted = true
+                endButton.tintColor = color2
+                endButton.isEnabled = true
+            }else{
+                createAlert(title: "Error", message: "You have already voted!")
+            }
         }else{
-            if(items.count < 1){
-                createAlert(title: "Error", message: "No items to vote on!")
-            }
-            else{
-                let indexPath = tableView.indexPathForSelectedRow
-                
-                if(indexPath?.row != nil){
-                    
-                    if(mcSession.connectedPeers.count > 0){
-                        if(!voted){
-                            self.items[(indexPath?.row)!].votes += 1
-                            self.items[(indexPath?.row)!].addOrDelete = "add"
-                            self.items[(indexPath?.row)!].saveItem()
-                            self.sendItem(self.items[(indexPath?.row)!])
-                            items.sort() { $0.votes > $1.votes }
-                            self.tableView.reloadData()
-                            voted = true
-                            endButton.tintColor = color2
-                            endButton.isEnabled = true
-                        }else{
-                            createAlert(title: "Error", message: "You have already voted!")
-                        }
-                    }
-                    else{
-                        self.items[(indexPath?.row)!].votes += 1
-                        self.tableView.reloadData()
-                        endButton.tintColor = color2
-                        endButton.isEnabled = true
-                    }
-                }else{
-                    createAlert(title: "Error", message: "No item is selected!")
-                }
-            }
+            createAlert(title: "Error", message: "No item is selected!")
         }
     }
     
+    @IBAction func voteButton2(_ sender: Any) {
+        let indexPath = tableView.indexPathForSelectedRow
+        
+        if(indexPath?.row != nil){
+            if(!voted){
+                self.items[(indexPath?.row)!].votes += 1
+                self.items[(indexPath?.row)!].addOrDelete = "add"
+                self.items[(indexPath?.row)!].saveItem()
+                self.sendItem(self.items[(indexPath?.row)!])
+                items.sort() { $0.votes > $1.votes }
+                self.tableView.reloadData()
+                voted = true
+                endButton.tintColor = color2
+                endButton.isEnabled = true
+            }else{
+                createAlert(title: "Error", message: "You have already voted!")
+            }
+        }else{
+            createAlert(title: "Error", message: "No item is selected!")
+        }
+    }
+    
+    
     //edits items.name
     @IBAction func editButton(_ sender: Any) {
-        
-        if(showResult){
-            createAlert(title: "Error", message: "start a new voting session!")
-        }else{
-            if(items.count > 0){
-                let indexPath = self.tableView.indexPathForSelectedRow
-                
-                if(indexPath?.row != nil){
-                    let alert = UIAlertController(title: "", message: "Edit List Item", preferredStyle: .alert)
-                    alert.addTextField{
-                        (textfield: UITextField) in textfield.placeholder = self.items[(indexPath?.row)!].name
-                    }
-                    
-                    alert.addAction(UIAlertAction(title: "Update", style: .default, handler: { (updateAction) in
-                        if(self.mcSession.connectedPeers.count > 0){
-                            self.items[(indexPath?.row)!].name = alert.textFields!.first!.text!
-                            self.items[(indexPath?.row)!].addOrDelete = "add"
-                            self.items[(indexPath?.row)!].saveItem()
-                            self.sendItem(self.items[(indexPath?.row)!])
-                            self.items.sort() { $0.votes > $1.votes }
-                            self.tableView.reloadRows(at: [indexPath!], with: .fade)
-                        }else{
-                            self.items[(indexPath?.row)!].name = alert.textFields!.first!.text!
-                            self.items.sort() { $0.votes > $1.votes }
-                            self.tableView.reloadRows(at: [indexPath!], with: .fade)
-                            
-                        }
-                        }))
-                    alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-                    self.present(alert, animated: false)
-                }else{
-                    createAlert(title: "Error", message: "No item is selected!")
+        if(items.count > 0){
+            let indexPath = self.tableView.indexPathForSelectedRow
+            
+            if(indexPath?.row != nil){
+                let alert = UIAlertController(title: "", message: "Edit List Item", preferredStyle: .alert)
+                alert.addTextField{
+                    (textfield: UITextField) in textfield.placeholder = self.items[(indexPath?.row)!].name
                 }
+                
+                alert.addAction(UIAlertAction(title: "Update", style: .default, handler: { (updateAction) in
+                    self.items[(indexPath?.row)!].name = alert.textFields!.first!.text!
+                    self.items[(indexPath?.row)!].addOrDelete = "add"
+                    self.items[(indexPath?.row)!].saveItem()
+                    self.sendItem(self.items[(indexPath?.row)!])
+                    self.items.sort() { $0.votes > $1.votes }
+                    self.tableView.reloadRows(at: [indexPath!], with: .fade)
+                }))
+                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+                self.present(alert, animated: false)
             }else{
-                createAlert(title: "Error", message: "No items to edit!")
+                createAlert(title: "Error", message: "No item is selected!")
             }
+        }else{
+            createAlert(title: "Error", message: "No items to edit!")
         }
     
     }
@@ -194,44 +236,39 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     //deletes selected item
     @IBAction func deleteItem(_ sender: Any) {
         
-        if(showResult){
-            createAlert(title: "Error", message: "Start a new voting session!")
-        }else{
-            if(items.count > 0){
-                let indexPath = tableView.indexPathForSelectedRow
+        if(items.count > 0){
+            let indexPath = tableView.indexPathForSelectedRow
+            
+            if(indexPath?.row != nil){
+                let actionSheet = UIAlertController(title: "Delete", message: "Are you sure want to delete this item?", preferredStyle: .actionSheet)
                 
-                if(indexPath?.row != nil){
-                    let actionSheet = UIAlertController(title: "Delete", message: "Are you sure want to delete this item?", preferredStyle: .actionSheet)
-                    
-                    actionSheet.addAction(UIAlertAction(
-                        title: "Yes",
-                        style: .default,
-                        handler: { (action:UIAlertAction) in
-                            if(indexPath?.row != nil){
-                                self.items[(indexPath?.row)!].addOrDelete = "delete"
-                                self.items[(indexPath?.row)!].saveItem()
-                                self.sendItem(self.items[(indexPath?.row)!])
-                                self.items[(indexPath?.row)!].deleteItem()
-                                self.items.remove(at: (indexPath?.row)!)
-                                self.tableView.deleteRows(at: [indexPath!], with: .automatic)
-                            }
-                    }))
-                    
-                    actionSheet.addAction(UIAlertAction(
-                        title: "No",
-                        style: .default,
-                        handler: nil
-                    ))
-                    
-                    popoverPresentation(actionSheet: actionSheet)
-                }else{
-                    createAlert(title: "Error", message: "Please selected an item!")
-                }
+                actionSheet.addAction(UIAlertAction(
+                    title: "Yes",
+                    style: .default,
+                    handler: { (action:UIAlertAction) in
+                        if(indexPath?.row != nil){
+                            self.items[(indexPath?.row)!].addOrDelete = "delete"
+                            self.items[(indexPath?.row)!].saveItem()
+                            self.sendItem(self.items[(indexPath?.row)!])
+                            self.items[(indexPath?.row)!].deleteItem()
+                            self.items.remove(at: (indexPath?.row)!)
+                            self.tableView.deleteRows(at: [indexPath!], with: .automatic)
+                        }
+                }))
+                
+                actionSheet.addAction(UIAlertAction(
+                    title: "No",
+                    style: .default,
+                    handler: nil
+                ))
+                
+                popoverPresentation(actionSheet: actionSheet)
             }else{
-                createAlert(title: "Error", message: "There are no items to delete!")
+                createAlert(title: "Error", message: "Please selected an item!")
             }
+        }else{
+            createAlert(title: "Error", message: "There are no items to delete!")
         }
-        
     }
     
     //host/join button
@@ -316,17 +353,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                     
                     self.popoverPresentation(actionSheet: actionSheet)
                 }else{
-                    if self.mcSession.connectedPeers.count > 0{
-                        newItem.saveItem()
-                        self.items.append(newItem)
-                        self.sendItem(newItem)
-                        self.items.sort() { $0.votes > $1.votes }
-                        self.tableView.reloadData()
-                    }else{
-                        self.items.append(newItem)
-                        self.items.sort() { $0.votes > $1.votes }
-                        self.tableView.reloadData()
-                    }
+                    newItem.saveItem()
+                    self.items.append(newItem)
+                    self.sendItem(newItem)
+                    self.items.sort() { $0.votes > $1.votes }
+                    self.tableView.reloadData()
                 }
             }
         ))
@@ -343,111 +374,63 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     //adds and saves created items
     @IBAction func addItem(_ sender: Any) {
-        if(showResult){
-            self.deleteAll()
-            showResult = false
-        }
         self.create()
     }//
     
     @IBAction func endButton(_ sender: Any) {
-        if(mcSession.connectedPeers.count > 0){
-            let actionSheet = UIAlertController(title: "Leave session", message: "Are you sure you want to leave this voting session?", preferredStyle: .actionSheet)
-            
-            actionSheet.addAction(UIAlertAction(
-                title: "Yes",
-                style: .default,
-                handler: { (action:UIAlertAction) in
-                    if(self.navBarTitle.text == "HOST"){
-                        let newItem = Item(name: "end", itemIdentifier: UUID(), addOrDelete: "end", votes: 0)
-                        newItem.saveItem()
-                        self.items.append(newItem)
-                        self.sendItem(newItem)
-                    }
-                    self.deleteAll()
-                    DataManager.clearAllFile()
-                    self.tableView.reloadData()
-                    self.mcSession.disconnect()
-                    self.endButton.tintColor = .clear
-                    self.endButton.isEnabled = false
-                    self.navBarTitle.text = "UNANIMOUS"
-                    self.voted = false
-            }))
-            
-            actionSheet.addAction(UIAlertAction(
-                title: "No",
-                style: .default,
-                handler: nil
-            ))
-            
-            popoverPresentation(actionSheet: actionSheet)
-        }else{
-            let actionSheet = UIAlertController(title: "End Voting", message: "Are you sure you want to finish voting?", preferredStyle: .actionSheet)
-            
-            actionSheet.addAction(UIAlertAction(
-                title: "Yes",
-                style: .default,
-                handler: { (action:UIAlertAction) in
-                    if(self.navBarTitle.text == "HOST"){
-                        DataManager.clearAllFile()
-                        self.deleteAll()
-                    }
-                    self.showResult = true
-                    DataManager.clearAllFile()
-                    self.tableView.reloadData()
-                    self.endButton.tintColor = .clear
-                    self.endButton.isEnabled = false
-                    self.navBarTitle.text = "UNANIMOUS"
-                    self.voted = false
-            }))
-            
-            actionSheet.addAction(UIAlertAction(
-                title: "No",
-                style: .default,
-                handler: nil
-            ))
-            
-            popoverPresentation(actionSheet: actionSheet)
-        }
+        let actionSheet = UIAlertController(title: "Leave session", message: "Are you sure you want to leave this voting session?", preferredStyle: .actionSheet)
+        
+        actionSheet.addAction(UIAlertAction(
+            title: "Yes",
+            style: .default,
+            handler: { (action:UIAlertAction) in
+                if(self.navBarTitle.text == "HOST"){
+                    let newItem = Item(name: "end", itemIdentifier: UUID(), addOrDelete: "end", votes: 0)
+                    newItem.saveItem()
+                    self.items.append(newItem)
+                    self.sendItem(newItem)
+                }
+                self.deleteAll()
+                DataManager.clearAllFile()
+                self.tableView.reloadData()
+                self.mcSession.disconnect()
+                self.endButton.tintColor = .clear
+                self.endButton.isEnabled = false
+                self.navBarTitle.text = "UNANIMOUS"
+                self.voted = false
+                self.toolbar2.isHidden = true
+                self.toolbar.isHidden = true
+                
+        }))
+        
+        actionSheet.addAction(UIAlertAction(
+            title: "No",
+            style: .default,
+            handler: nil
+        ))
+        
+        popoverPresentation(actionSheet: actionSheet)
     }
     
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
         return items.count
-    }
-    
-    func customCell(cell: TableViewCell, indexPath: IndexPath){
-        
     }
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell{
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell") as! TableViewCell
         cell.backgroundColor = color2
         cell.listLabel.textColor = UIColor.black
-        if(mcSession.connectedPeers.count > 0){
-            if items[indexPath.row].votes == 0{
-                cell.listLabel.text = items[indexPath.row].name
-                cell.listLabel.font = UIFont(name: "BloggerSans-Medium", size: cell.listLabel.font.pointSize)
-            }else{
-                if(items[indexPath.row].votes == 1){
-                    cell.listLabel.text = items[indexPath.row].name + " : " + String(items[indexPath.row].votes) + " like"
-                    cell.listLabel.font = UIFont(name: "BloggerSans-Medium", size: cell.listLabel.font.pointSize)
-                }else{
-                    cell.listLabel.text = items[indexPath.row].name + " : " + String(items[indexPath.row].votes) + " likes"
-                    cell.listLabel.font = UIFont(name: "BloggerSans-Medium", size: cell.listLabel.font.pointSize)
-                }
-            }
+        
+        if items[indexPath.row].votes == 0{
+            cell.listLabel.text = items[indexPath.row].name
+            cell.listLabel.font = UIFont(name: "BloggerSans-Medium", size: cell.listLabel.font.pointSize)
         }else{
-            if(!showResult){
-                cell.listLabel.text = items[indexPath.row].name
+            if(items[indexPath.row].votes == 1){
+                cell.listLabel.text = items[indexPath.row].name + " : " + String(items[indexPath.row].votes) + " like"
                 cell.listLabel.font = UIFont(name: "BloggerSans-Medium", size: cell.listLabel.font.pointSize)
             }else{
-                if(items[indexPath.row].votes == 1){
-                    cell.listLabel.text = items[indexPath.row].name + " : " + String(items[indexPath.row].votes) + " like"
-                    cell.listLabel.font = UIFont(name: "BloggerSans-Medium", size: cell.listLabel.font.pointSize)
-                }else{
-                    cell.listLabel.text = items[indexPath.row].name + " : " + String(items[indexPath.row].votes) + " likes"
-                    cell.listLabel.font = UIFont(name: "BloggerSans-Medium", size: cell.listLabel.font.pointSize)
-                }
+                cell.listLabel.text = items[indexPath.row].name + " : " + String(items[indexPath.row].votes) + " likes"
+                cell.listLabel.font = UIFont(name: "BloggerSans-Medium", size: cell.listLabel.font.pointSize)
             }
         }
         return cell
@@ -473,7 +456,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         switch state {
         case MCSessionState.connected:
             print("Connected: \(peerID.displayName)")
-            
+            if(self.navBarTitle.text != "HOST"){
+                toolbar.isHidden = true
+                add.isEnabled = false
+                add.tintColor = .clear
+                toolbar2.isHidden = false
+            }else{
+                for i in 0..<items.count{
+                    self.sendItem(items[i])
+                }
+            }
         case MCSessionState.connecting:
             print("Connecting: \(peerID.displayName)")
             

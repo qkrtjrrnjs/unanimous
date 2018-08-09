@@ -18,7 +18,7 @@
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="undisclosed" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="unanimous" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -28,10 +28,10 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="cell" rowHeight="70" id="R5R-cB-hmf" customClass="TableViewCell" customModule="undisclosed" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="cell" rowHeight="70" id="R5R-cB-hmf" customClass="TableViewCell" customModule="unanimous" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="375" height="70"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxY="YES"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="R5R-cB-hmf" id="hWM-vb-1Rt" customClass="TableViewCell" customModule="undisclosed" customModuleProvider="target">
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="R5R-cB-hmf" id="hWM-vb-1Rt" customClass="TableViewCell" customModule="unanimous" customModuleProvider="target">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="69.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
@@ -56,7 +56,7 @@
                                 <color key="backgroundColor" red="0.47563505172729492" green="0.47564667463302612" blue="0.47564047574996948" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <items>
                                     <navigationItem prompt="                    " id="3fs-nm-AS0">
-                                        <barButtonItem key="leftBarButtonItem" systemItem="stop" id="sQO-vo-OzM">
+                                        <barButtonItem key="leftBarButtonItem" title="Leave" id="sQO-vo-OzM">
                                             <connections>
                                                 <action selector="endButton:" destination="BYZ-38-t0r" id="hyC-Yb-oMe"/>
                                             </connections>
@@ -101,11 +101,25 @@
                             </toolbar>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="UNANIMOUS" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RW8-Fn-cWo">
                                 <rect key="frame" x="138" y="45" width="101" height="20"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <fontDescription key="fontDescription" name="BloggerSans-Medium" family="Blogger Sans" pointSize="20"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Pcu-tG-0NP">
+                                <rect key="frame" x="0.0" y="623" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                <items>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="mgc-Hl-4dh"/>
+                                    <barButtonItem title="Item" image="like" id="iQ8-KG-0ty">
+                                        <inset key="imageInsets" minX="0.0" minY="1" maxX="0.0" maxY="-8"/>
+                                        <connections>
+                                            <action selector="voteButton2:" destination="BYZ-38-t0r" id="IZU-rL-0cy"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="Hlf-dP-bNM"/>
+                                </items>
+                            </toolbar>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
@@ -116,7 +130,9 @@
                         <outlet property="navBarTitle" destination="RW8-Fn-cWo" id="V4Y-jS-8Ec"/>
                         <outlet property="tableView" destination="8cu-pU-Fu6" id="owM-H8-bgJ"/>
                         <outlet property="toolbar" destination="uwg-mk-8kb" id="bBC-Z5-7FD"/>
+                        <outlet property="toolbar2" destination="Pcu-tG-0NP" id="4iF-ry-UQv"/>
                         <outlet property="voteButton" destination="KHt-if-qrd" id="dTC-me-yjU"/>
+                        <outlet property="voteButton2" destination="iQ8-KG-0ty" id="Oeh-xW-RyO"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

@@ -23,10 +23,11 @@
 		837C8C1D2109680C0062D653 /* Blogger Sans-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 837C8C152109680B0062D653 /* Blogger Sans-Italic.ttf */; };
 		837C8C1E2109680C0062D653 /* Blogger Sans-Bold Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 837C8C162109680B0062D653 /* Blogger Sans-Bold Italic.ttf */; };
 		837C8C1F2109680C0062D653 /* Blogger Sans-Medium Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 837C8C172109680C0062D653 /* Blogger Sans-Medium Italic.ttf */; };
+		837C8C452118AC1D0062D653 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 837C8C442118AC1D0062D653 /* Default-568h@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		83385F8920CF549B000BAA9B /* undisclosed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = undisclosed.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		83385F8920CF549B000BAA9B /* unanimous.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = unanimous.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		83385F8C20CF549B000BAA9B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		83385F8E20CF549B000BAA9B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		83385F9120CF549B000BAA9B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -44,6 +45,7 @@
 		837C8C152109680B0062D653 /* Blogger Sans-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Blogger Sans-Italic.ttf"; sourceTree = "<group>"; };
 		837C8C162109680B0062D653 /* Blogger Sans-Bold Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Blogger Sans-Bold Italic.ttf"; sourceTree = "<group>"; };
 		837C8C172109680C0062D653 /* Blogger Sans-Medium Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Blogger Sans-Medium Italic.ttf"; sourceTree = "<group>"; };
+		837C8C442118AC1D0062D653 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,7 +62,8 @@
 		83385F8020CF549B000BAA9B = {
 			isa = PBXGroup;
 			children = (
-				83385F8B20CF549B000BAA9B /* undisclosed */,
+				837C8C442118AC1D0062D653 /* Default-568h@2x.png */,
+				83385F8B20CF549B000BAA9B /* unanimous */,
 				83385F8A20CF549B000BAA9B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -68,12 +71,12 @@
 		83385F8A20CF549B000BAA9B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				83385F8920CF549B000BAA9B /* undisclosed.app */,
+				83385F8920CF549B000BAA9B /* unanimous.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		83385F8B20CF549B000BAA9B /* undisclosed */ = {
+		83385F8B20CF549B000BAA9B /* unanimous */ = {
 			isa = PBXGroup;
 			children = (
 				83385F8C20CF549B000BAA9B /* AppDelegate.swift */,
@@ -87,7 +90,7 @@
 				83385F9520CF549D000BAA9B /* LaunchScreen.storyboard */,
 				83385F9820CF549D000BAA9B /* Info.plist */,
 			);
-			path = undisclosed;
+			path = unanimous;
 			sourceTree = "<group>";
 		};
 		837C8C0F210967C30062D653 /* fonts */ = {
@@ -108,9 +111,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		83385F8820CF549B000BAA9B /* undisclosed */ = {
+		83385F8820CF549B000BAA9B /* unanimous */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 83385F9B20CF549D000BAA9B /* Build configuration list for PBXNativeTarget "undisclosed" */;
+			buildConfigurationList = 83385F9B20CF549D000BAA9B /* Build configuration list for PBXNativeTarget "unanimous" */;
 			buildPhases = (
 				83385F8520CF549B000BAA9B /* Sources */,
 				83385F8620CF549B000BAA9B /* Frameworks */,
@@ -120,9 +123,9 @@
 			);
 			dependencies = (
 			);
-			name = undisclosed;
+			name = unanimous;
 			productName = undisclosed;
-			productReference = 83385F8920CF549B000BAA9B /* undisclosed.app */;
+			productReference = 83385F8920CF549B000BAA9B /* unanimous.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -140,7 +143,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83385F8420CF549B000BAA9B /* Build configuration list for PBXProject "undisclosed" */;
+			buildConfigurationList = 83385F8420CF549B000BAA9B /* Build configuration list for PBXProject "unanimous" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -153,7 +156,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				83385F8820CF549B000BAA9B /* undisclosed */,
+				83385F8820CF549B000BAA9B /* unanimous */,
 			);
 		};
 /* End PBXProject section */
@@ -168,6 +171,7 @@
 				837C8C1A2109680C0062D653 /* Blogger Sans-Medium.ttf in Resources */,
 				837C8C1B2109680C0062D653 /* Blogger Sans-Light Italic.ttf in Resources */,
 				837C8C182109680C0062D653 /* Blogger Sans-Bold.ttf in Resources */,
+				837C8C452118AC1D0062D653 /* Default-568h@2x.png in Resources */,
 				837C8C1D2109680C0062D653 /* Blogger Sans-Italic.ttf in Resources */,
 				837C8C192109680C0062D653 /* Blogger Sans.ttf.ttf in Resources */,
 				837C8C1C2109680C0062D653 /* Blogger Sans-Light.ttf in Resources */,
@@ -334,7 +338,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = KPJ97BZ7MV;
-				INFOPLIST_FILE = undisclosed/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/unanimous/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -353,7 +357,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = KPJ97BZ7MV;
-				INFOPLIST_FILE = undisclosed/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/unanimous/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -369,7 +373,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		83385F8420CF549B000BAA9B /* Build configuration list for PBXProject "undisclosed" */ = {
+		83385F8420CF549B000BAA9B /* Build configuration list for PBXProject "unanimous" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83385F9920CF549D000BAA9B /* Debug */,
@@ -378,7 +382,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83385F9B20CF549D000BAA9B /* Build configuration list for PBXNativeTarget "undisclosed" */ = {
+		83385F9B20CF549D000BAA9B /* Build configuration list for PBXNativeTarget "unanimous" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83385F9C20CF549D000BAA9B /* Debug */,
