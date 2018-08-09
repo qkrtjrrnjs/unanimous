@@ -173,6 +173,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 endButton.tintColor = color2
                 endButton.isEnabled = true
             }else{
+//                
                 createAlert(title: "Error", message: "You have already voted!")
             }
         }else{
@@ -279,31 +280,39 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             title: "Host Session",
             style: .default,
             handler: { (action:UIAlertAction) in
-                self.mcAdvertiserAssistant = MCAdvertiserAssistant(serviceType: "ysyp", discoveryInfo: nil, session: self.mcSession)
-                self.mcAdvertiserAssistant.start()
-                self.navBarTitle.text = "HOST"
-                DataManager.clearAllFile()
-                self.deleteAll()
-                self.mcSession.disconnect()
-                self.voted = false
-                self.endButton.tintColor = self.color2
-                self.endButton.isEnabled = true
+                if(self.navBarTitle.text == "HOST"){
+                    self.createAlert(title: "ERROR", message: "You are already hosting a session, terminate current session to host another session!")
+                }else{
+                    self.mcAdvertiserAssistant = MCAdvertiserAssistant(serviceType: "ysyp", discoveryInfo: nil, session: self.mcSession)
+                    self.mcAdvertiserAssistant.start()
+                    self.navBarTitle.text = "HOST"
+                    DataManager.clearAllFile()
+                    self.deleteAll()
+                    self.mcSession.disconnect()
+                    self.voted = false
+                    self.endButton.tintColor = self.color2
+                    self.endButton.isEnabled = true
+                }
         }))
         
         actionSheet.addAction(UIAlertAction(
             title: "Join Session",
             style: .default,
             handler: { (action:UIAlertAction) in
-                let mcBrowser = MCBrowserViewController(serviceType: "ysyp", session: self.mcSession)
-                mcBrowser.delegate = self
-                self.present(mcBrowser, animated: true, completion: nil)
-                DataManager.clearAllFile()
-                self.deleteAll()
-                self.navBarTitle.text = "UNANIMOUS"
-                self.mcSession.disconnect()
-                self.voted = false
-                self.endButton.tintColor = .clear
-                self.endButton.isEnabled = false
+                if(self.navBarTitle.text == "HOST"){
+                    self.createAlert(title: "ERROR", message: "You are a host, terminate current session to join a session!")
+                }else{
+                    let mcBrowser = MCBrowserViewController(serviceType: "ysyp", session: self.mcSession)
+                    mcBrowser.delegate = self
+                    self.present(mcBrowser, animated: true, completion: nil)
+                    DataManager.clearAllFile()
+                    self.deleteAll()
+                    self.navBarTitle.text = "UNANIMOUS"
+                    self.mcSession.disconnect()
+                    self.voted = false
+                    self.endButton.tintColor = .clear
+                    self.endButton.isEnabled = false
+                }
         }))
         
         actionSheet.addAction(UIAlertAction(
@@ -399,8 +408,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 self.navBarTitle.text = "UNANIMOUS"
                 self.voted = false
                 self.toolbar2.isHidden = true
-                self.toolbar.isHidden = true
-                
+                self.toolbar.isHidden = false
+                self.add.tintColor = self.color2
+                self.add.isEnabled = true
         }))
         
         actionSheet.addAction(UIAlertAction(
@@ -477,9 +487,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     //handles received data
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
         do{
-            var item = try JSONDecoder().decode(Item.self, from: data)
+            let item = try JSONDecoder().decode(Item.self, from: data)
             if(item.addOrDelete == "add"){
-                item.addOrDelete = "delete"
+                //item.addOrDelete = "delete"
                 DataManager.save(item, with: item.itemIdentifier.uuidString)
             }
             else if(item.addOrDelete == "delete"){
@@ -499,6 +509,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                         self.endButton.tintColor = .clear
                         self.voted = false
                         self.mcSession.disconnect()
+                        self.toolbar2.isHidden = true
+                        self.toolbar.isHidden = false
+                        self.add.tintColor = self.color2
+                        self.add.isEnabled = true
                 }))
                 
                 popoverPresentation(actionSheet: actionSheet)
