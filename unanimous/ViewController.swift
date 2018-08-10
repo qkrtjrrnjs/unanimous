@@ -450,7 +450,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     //adds and saves created items
     @IBAction func addItem(_ sender: Any) {
-        self.create()
+        if(mcSession.connectedPeers.count > 0 || self.navBarTitle.text == "HOST"){
+            self.create()
+        }else{
+            self.createAlert(title: "Error", message: "Please host a session first!")
+        }
     }//
     
     @IBAction func endButton(_ sender: Any) {
