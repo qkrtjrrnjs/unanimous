@@ -8,22 +8,12 @@
 import UIKit
 import MultipeerConnectivity
 
-
-class TableViewCell: UITableViewCell {
-    
-    @IBOutlet weak var listLabel: UILabel!
-    
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
-    
-} 
-
 class ViewController: UIViewController{
     
     var items = [Item]()
     
+    let cellId = "cellId"
+
     var host = false
     var voted = false
     var prevVote = UUID()
@@ -33,8 +23,8 @@ class ViewController: UIViewController{
     var mcAdvertiserAssistant:MCAdvertiserAssistant!
     
     var navigationBarApperance = UINavigationBar.appearance()
-    
-    //hex to UIColor
+    var logoButton = UIBarButtonItem()
+
     var color1 = UIColor(hexString: "#ff2d55")
     var color2 = UIColor(hexString: "#ffffff")
     
@@ -48,8 +38,6 @@ class ViewController: UIViewController{
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var toolbar2: UIToolbar!
     
-    var logoButton = UIBarButtonItem()
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -60,6 +48,8 @@ class ViewController: UIViewController{
     }
     
     func setUpMISC(){
+        
+        tableView.register(ListCell.self, forCellReuseIdentifier: cellId)
         
         tableView.delegate = self
         tableView.dataSource = self
@@ -518,7 +508,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource{
        }
 
        public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell{
-           let cell = tableView.dequeueReusableCell(withIdentifier: "cell") as! TableViewCell
+           let cell = tableView.dequeueReusableCell(withIdentifier: cellId) as! ListCell
            cell.backgroundColor = color2
            cell.listLabel.textColor = UIColor.black
            
