@@ -560,6 +560,8 @@ extension ViewController: MCSessionDelegate, MCBrowserViewControllerDelegate{
             
         case MCSessionState.notConnected:
             print("Not Connected: \(peerID.displayName)")
+        @unknown default:
+            fatalError("unknown error")
         }
     }
     
