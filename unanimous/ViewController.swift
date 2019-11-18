@@ -156,141 +156,144 @@ class ViewController: UIViewController{
     
     //handles votes
     @IBAction func voteButton(_ sender: Any) {
-        let indexPath = tableView.indexPathForSelectedRow
-        
-        if(indexPath?.row != nil){
-            if(!voted){
-                prevVote = self.items[(indexPath?.row)!].itemIdentifier
-                self.items[(indexPath?.row)!].votes += 1
-                self.items[(indexPath?.row)!].saveItem()
-                self.sendItem(self.items[(indexPath?.row)!])
-                items.sort() { $0.votes > $1.votes }
-                self.tableView.reloadData()
-                voted = true
-                endButton.tintColor = color2
-                endButton.isEnabled = true
-            }else{
-                let actionSheet = UIAlertController(title: "Warning", message: "You have already voted, are you sure you want to change your vote?", preferredStyle: .actionSheet)
-                
-                actionSheet.addAction(UIAlertAction(
-                    title: "Yes",
-                    style: .default,
-                    handler: { (action:UIAlertAction) in
-                        //removing previous vote
-                        for i in 0..<self.items.count{
-                            if self.items[i].itemIdentifier == self.prevVote{
-                                self.items[i].votes -= 1
-                                self.items[i].saveItem()
-                                self.sendItem(self.items[i])
-                                break
-                            }
-                        }
-                        self.items.sort() { $0.votes > $1.votes }
-                        self.tableView.reloadData()
-                        
-                        //casting new vote
-                        self.prevVote = self.items[(indexPath?.row)!].itemIdentifier
-                        self.items[(indexPath?.row)!].votes += 1
-                        self.items[(indexPath?.row)!].saveItem()
-                        self.sendItem(self.items[(indexPath?.row)!])
-                        
-                        self.items.sort() { $0.votes > $1.votes }
-                        self.tableView.reloadData()
-                }))
-                
-                actionSheet.addAction(UIAlertAction(
-                    title: "No",
-                    style: .default,
-                    handler: nil
-                ))
-                
-                popoverPresentation(actionSheet: actionSheet)
-            }
-        }else{
+        guard let indexPath = tableView.indexPathForSelectedRow else {
             createAlert(title: "Error", message: "No item is selected!")
+            return
         }
+        let indexPathRow = indexPath.row
+        
+        if(!voted){
+            prevVote = self.items[indexPathRow].itemIdentifier
+            self.items[indexPathRow].votes += 1
+            self.items[indexPathRow].saveItem()
+            self.sendItem(self.items[indexPathRow])
+            items.sort() { $0.votes > $1.votes }
+            self.tableView.reloadData()
+            voted = true
+            endButton.tintColor = color2
+            endButton.isEnabled = true
+        }else{
+            let actionSheet = UIAlertController(title: "Warning", message: "You have already voted, are you sure you want to change your vote?", preferredStyle: .actionSheet)
+            
+            actionSheet.addAction(UIAlertAction(
+                title: "Yes",
+                style: .default,
+                handler: { (action:UIAlertAction) in
+                    //removing previous vote
+                    for i in 0..<self.items.count{
+                        if self.items[i].itemIdentifier == self.prevVote{
+                            self.items[i].votes -= 1
+                            self.items[i].saveItem()
+                            self.sendItem(self.items[i])
+                            break
+                        }
+                    }
+                    self.items.sort() { $0.votes > $1.votes }
+                    self.tableView.reloadData()
+                    
+                    //casting new vote
+                    self.prevVote = self.items[indexPathRow].itemIdentifier
+                    self.items[indexPathRow].votes += 1
+                    self.items[indexPathRow].saveItem()
+                    self.sendItem(self.items[indexPathRow])
+                        
+                        self.items.sort() { $0.votes > $1.votes }
+                        self.tableView.reloadData()
+            }))
+            
+            actionSheet.addAction(UIAlertAction(
+                title: "No",
+                style: .default,
+                handler: nil
+            ))
+            
+            popoverPresentation(actionSheet: actionSheet)
+        }
+      
     }
     
     @IBAction func voteButton2(_ sender: Any) {
-        let indexPath = tableView.indexPathForSelectedRow
-        
-        if(indexPath?.row != nil){
-            if(!voted){
-                prevVote = self.items[(indexPath?.row)!].itemIdentifier
-                self.items[(indexPath?.row)!].votes += 1
-                self.items[(indexPath?.row)!].saveItem()
-                self.sendItem(self.items[(indexPath?.row)!])
-                items.sort() { $0.votes > $1.votes }
-                self.tableView.reloadData()
-                voted = true
-                endButton.tintColor = color2
-                endButton.isEnabled = true
-            }else{
-                let actionSheet = UIAlertController(title: "Warning", message: "You have already voted, are you sure you want to change your vote?", preferredStyle: .actionSheet)
-                
-                actionSheet.addAction(UIAlertAction(
-                    title: "Yes",
-                    style: .default,
-                    handler: { (action:UIAlertAction) in
-                        //removing previous vote
-                        for i in 0..<self.items.count{
-                            if self.items[i].itemIdentifier == self.prevVote{
-                                self.items[i].votes -= 1
-                                self.items[i].saveItem()
-                                self.sendItem(self.items[i])
-                                break
-                            }
-                        }
-                        self.items.sort() { $0.votes > $1.votes }
-                        self.tableView.reloadData()
-                        
-                        //casting new vote
-                        self.prevVote = self.items[(indexPath?.row)!].itemIdentifier
-                        self.items[(indexPath?.row)!].votes += 1
-                        self.items[(indexPath?.row)!].saveItem()
-                        self.sendItem(self.items[(indexPath?.row)!])
-                        
-                        self.items.sort() { $0.votes > $1.votes }
-                        self.tableView.reloadData()
-                }))
-                
-                actionSheet.addAction(UIAlertAction(
-                    title: "No",
-                    style: .default,
-                    handler: nil
-                ))
-                
-                popoverPresentation(actionSheet: actionSheet)
-            }
-        }else{
+        guard let indexPath = tableView.indexPathForSelectedRow else {
             createAlert(title: "Error", message: "No item is selected!")
+            return
         }
+        let indexPathRow = indexPath.row
+        
+        if(!voted){
+            prevVote = self.items[indexPathRow].itemIdentifier
+            self.items[indexPathRow].votes += 1
+            self.items[indexPathRow].saveItem()
+            self.sendItem(self.items[indexPathRow])
+            items.sort() { $0.votes > $1.votes }
+            self.tableView.reloadData()
+            voted = true
+            endButton.tintColor = color2
+            endButton.isEnabled = true
+        }else{
+            let actionSheet = UIAlertController(title: "Warning", message: "You have already voted, are you sure you want to change your vote?", preferredStyle: .actionSheet)
+            
+            actionSheet.addAction(UIAlertAction(
+                title: "Yes",
+                style: .default,
+                handler: { (action:UIAlertAction) in
+                    //removing previous vote
+                    for i in 0..<self.items.count{
+                        if self.items[i].itemIdentifier == self.prevVote{
+                            self.items[i].votes -= 1
+                            self.items[i].saveItem()
+                            self.sendItem(self.items[i])
+                            break
+                        }
+                    }
+                    self.items.sort() { $0.votes > $1.votes }
+                    self.tableView.reloadData()
+                    
+                    //casting new vote
+                    self.prevVote = self.items[indexPathRow].itemIdentifier
+                    self.items[indexPathRow].votes += 1
+                    self.items[indexPathRow].saveItem()
+                    self.sendItem(self.items[indexPathRow])
+                    
+                    self.items.sort() { $0.votes > $1.votes }
+                    self.tableView.reloadData()
+            }))
+            
+            actionSheet.addAction(UIAlertAction(
+                title: "No",
+                style: .default,
+                handler: nil
+            ))
+            
+            popoverPresentation(actionSheet: actionSheet)
+        }
+ 
     }
     
     
     //edits items.name
     @IBAction func editButton(_ sender: Any) {
         if(items.count > 0){
-            let indexPath = self.tableView.indexPathForSelectedRow
-            
-            if(indexPath?.row != nil){
-                let alert = UIAlertController(title: "", message: "Edit List Item", preferredStyle: .alert)
-                alert.addTextField{
-                    (textfield: UITextField) in textfield.placeholder = self.items[(indexPath?.row)!].name
-                }
-                
-                alert.addAction(UIAlertAction(title: "Update", style: .default, handler: { (updateAction) in
-                    self.items[(indexPath?.row)!].name = alert.textFields!.first!.text!
-                    self.items[(indexPath?.row)!].saveItem()
-                    self.sendItem(self.items[(indexPath?.row)!])
-                    self.items.sort() { $0.votes > $1.votes }
-                    self.tableView.reloadRows(at: [indexPath!], with: .fade)
-                }))
-                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-                self.present(alert, animated: false)
-            }else{
+            guard let indexPath = self.tableView.indexPathForSelectedRow else {
                 createAlert(title: "Error", message: "No item is selected!")
+                return
             }
+            let indexPathRow = indexPath.row
+            
+            let alert = UIAlertController(title: "", message: "Edit List Item", preferredStyle: .alert)
+            alert.addTextField{
+                (textfield: UITextField) in textfield.placeholder = self.items[indexPathRow].name
+            }
+            
+            alert.addAction(UIAlertAction(title: "Update", style: .default, handler: { (updateAction) in
+                self.items[indexPathRow].name = alert.textFields!.first!.text!
+                self.items[indexPathRow].saveItem()
+                self.sendItem(self.items[indexPathRow])
+                self.items.sort() { $0.votes > $1.votes }
+                self.tableView.reloadRows(at: [indexPath], with: .fade)
+            }))
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            self.present(alert, animated: false)
+            
         }else{
             createAlert(title: "Error", message: "No items to edit!")
         }
@@ -306,17 +309,19 @@ class ViewController: UIViewController{
                 return
             }
             
+            let indexPathRow = indexPath.row
+            
             let actionSheet = UIAlertController(title: "Delete", message: "Are you sure want to delete this item?", preferredStyle: .actionSheet)
             
             actionSheet.addAction(UIAlertAction(
                 title: "Yes",
                 style: .default,
                 handler: { (action:UIAlertAction) in
-                    self.items[indexPath.row].addOrDelete = "delete"
-                    self.items[indexPath.row].saveItem()
-                    self.sendItem(self.items[indexPath.row])
-                    self.items[indexPath.row].deleteItem()
-                    self.items.remove(at: indexPath.row)
+                    self.items[indexPathRow].addOrDelete = "delete"
+                    self.items[indexPathRow].saveItem()
+                    self.sendItem(self.items[indexPathRow])
+                    self.items[indexPathRow].deleteItem()
+                    self.items.remove(at: indexPathRow)
                     self.tableView.deleteRows(at: [indexPath], with: .automatic)
             }))
             
