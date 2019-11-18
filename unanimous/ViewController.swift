@@ -301,35 +301,33 @@ class ViewController: UIViewController{
     @IBAction func deleteItem(_ sender: Any) {
         
         if(items.count > 0){
-            let indexPath = tableView.indexPathForSelectedRow
-            
-            if(indexPath?.row != nil){
-                let actionSheet = UIAlertController(title: "Delete", message: "Are you sure want to delete this item?", preferredStyle: .actionSheet)
-                
-                actionSheet.addAction(UIAlertAction(
-                    title: "Yes",
-                    style: .default,
-                    handler: { (action:UIAlertAction) in
-                        if(indexPath?.row != nil){
-                            self.items[(indexPath?.row)!].addOrDelete = "delete"
-                            self.items[(indexPath?.row)!].saveItem()
-                            self.sendItem(self.items[(indexPath?.row)!])
-                            self.items[(indexPath?.row)!].deleteItem()
-                            self.items.remove(at: (indexPath?.row)!)
-                            self.tableView.deleteRows(at: [indexPath!], with: .automatic)
-                        }
-                }))
-                
-                actionSheet.addAction(UIAlertAction(
-                    title: "No",
-                    style: .default,
-                    handler: nil
-                ))
-                
-                popoverPresentation(actionSheet: actionSheet)
-            }else{
+            guard let indexPath = tableView.indexPathForSelectedRow else {
                 createAlert(title: "Error", message: "Please selected an item!")
+                return
             }
+            
+            let actionSheet = UIAlertController(title: "Delete", message: "Are you sure want to delete this item?", preferredStyle: .actionSheet)
+            
+            actionSheet.addAction(UIAlertAction(
+                title: "Yes",
+                style: .default,
+                handler: { (action:UIAlertAction) in
+                    self.items[indexPath.row].addOrDelete = "delete"
+                    self.items[indexPath.row].saveItem()
+                    self.sendItem(self.items[indexPath.row])
+                    self.items[indexPath.row].deleteItem()
+                    self.items.remove(at: indexPath.row)
+                    self.tableView.deleteRows(at: [indexPath], with: .automatic)
+            }))
+            
+            actionSheet.addAction(UIAlertAction(
+                title: "No",
+                style: .default,
+                handler: nil
+            ))
+            
+            popoverPresentation(actionSheet: actionSheet)
+         
         }else{
             createAlert(title: "Error", message: "There are no items to delete!")
         }
@@ -582,7 +580,7 @@ extension ViewController: MCSessionDelegate, MCBrowserViewControllerDelegate{
             }
             
             DispatchQueue.main.async {
-                self.loadData()
+                self.loadData()//should not load data on main thread
             }
             
         }catch{
