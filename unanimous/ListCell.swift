@@ -14,12 +14,34 @@ class ListCell: UITableViewCell {
         let label = UILabel()
         label.numberOfLines = 0
         label.textAlignment = .center
+        label.textColor = .black
         return label
     }()
+    
+    var item: Item?{
+        didSet{
+            guard let item = item else { return }
+            
+            if item.votes == 0{
+                listLabel.text = item.name
+                listLabel.font = UIFont(name: "BloggerSans-Medium", size: listLabel.font.pointSize)
+            }else{
+                if(item.votes == 1){
+                    listLabel.text = item.name + " : " + String(item.votes) + " like"
+                    listLabel.font = UIFont(name: "BloggerSans-Medium", size: listLabel.font.pointSize)
+                }else{
+                    listLabel.text = item.name + " : " + String(item.votes) + " likes"
+                    listLabel.font = UIFont(name: "BloggerSans-Medium", size: listLabel.font.pointSize)
+                }
+            }
+            
+        }
+    }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
     
+        self.backgroundColor = UIColor(hexString: "#ffffff")
         self.addSubview(listLabel)
         
         listLabel.translatesAutoresizingMaskIntoConstraints = false

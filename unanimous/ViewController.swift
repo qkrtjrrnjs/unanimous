@@ -42,36 +42,41 @@ class ViewController: UIViewController{
         super.viewDidLoad()
 
         setupConnectivity()
-        setUpMISC()
+        setUpTableView()
+        setUpLongPressGesture()
         setUpUI()
-        
+        DataManager.clearAllFile()
     }
     
-    func setUpMISC(){
-        
+    func setUpTableView(){
         tableView.register(ListCell.self, forCellReuseIdentifier: cellId)
         
         tableView.delegate = self
         tableView.dataSource = self
-        
-        //add Long press Gesture
+    }
+    
+    func setUpLongPressGesture(){
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressed(sender:)))
         self.view.addGestureRecognizer(longPressRecognizer)
-        
-        DataManager.clearAllFile()
     }
     
     func setUpUI(){
         self.view.backgroundColor = color2
+        
         toolbar.barTintColor = color1
         toolbar.tintColor = color2
+        
         navigationBarApperance.barTintColor = color1
         navigationBarApperance.tintColor = color2
+        
         tableView.backgroundColor = color2
+        
         navBarTitle.textColor = color2
         navBarTitle.textAlignment = .center
+        
         endButton.tintColor = .clear
         endButton.isEnabled = false
+        
         toolbar2.isHidden = true
         toolbar2.barTintColor = color1
         toolbar2.tintColor = color2
@@ -504,29 +509,17 @@ class ViewController: UIViewController{
 extension ViewController: UITableViewDelegate, UITableViewDataSource{
     
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
-           return items.count
-       }
-
-       public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell{
-           let cell = tableView.dequeueReusableCell(withIdentifier: cellId) as! ListCell
-           cell.backgroundColor = color2
-           cell.listLabel.textColor = UIColor.black
-           
-           if items[indexPath.row].votes == 0{
-               cell.listLabel.text = items[indexPath.row].name
-               cell.listLabel.font = UIFont(name: "BloggerSans-Medium", size: cell.listLabel.font.pointSize)
-           }else{
-               if(items[indexPath.row].votes == 1){
-                   cell.listLabel.text = items[indexPath.row].name + " : " + String(items[indexPath.row].votes) + " like"
-                   cell.listLabel.font = UIFont(name: "BloggerSans-Medium", size: cell.listLabel.font.pointSize)
-               }else{
-                   cell.listLabel.text = items[indexPath.row].name + " : " + String(items[indexPath.row].votes) + " likes"
-                   cell.listLabel.font = UIFont(name: "BloggerSans-Medium", size: cell.listLabel.font.pointSize)
-               }
-           }
-           return cell
-       }
-       
+        return items.count
+    }
+    
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell{
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellId) as! ListCell
+        
+        cell.item = items[indexPath.row]
+        
+        return cell
+    }
+    
 }
 
 extension ViewController: MCSessionDelegate, MCBrowserViewControllerDelegate{
