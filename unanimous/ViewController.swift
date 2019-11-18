@@ -20,7 +20,7 @@ class TableViewCell: UITableViewCell {
     
 } 
 
-class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, MCSessionDelegate, MCBrowserViewControllerDelegate  {
+class ViewController: UIViewController{
     
     var items = [Item]()
     
@@ -53,16 +53,25 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        setupConnectivity()
+        setUpMISC()
+        setUpUI()
+        
+    }
+    
+    func setUpMISC(){
+        
         tableView.delegate = self
         tableView.dataSource = self
-        
-        setupConnectivity()
         
         //add Long press Gesture
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressed(sender:)))
         self.view.addGestureRecognizer(longPressRecognizer)
-
-        //change style
+        
+        DataManager.clearAllFile()
+    }
+    
+    func setUpUI(){
         self.view.backgroundColor = color2
         toolbar.barTintColor = color1
         toolbar.tintColor = color2
@@ -76,19 +85,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         toolbar2.isHidden = true
         toolbar2.barTintColor = color1
         toolbar2.tintColor = color2
-        
-        DataManager.clearAllFile()
-    }//
-    
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }//
+    }
     
     @objc func longPressed(sender: UILongPressGestureRecognizer) {
         
-        if sender.state == UIGestureRecognizerState.began {
+        if sender.state == UIGestureRecognizer.State.began {
             
             let touchPoint = sender.location(in: self.tableView)
             if let indexPath = tableView.indexPathForRow(at: touchPoint) {
@@ -494,30 +495,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         popoverPresentation(actionSheet: actionSheet)
     }
     
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
-        return items.count
-    }
-
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell{
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell") as! TableViewCell
-        cell.backgroundColor = color2
-        cell.listLabel.textColor = UIColor.black
-        
-        if items[indexPath.row].votes == 0{
-            cell.listLabel.text = items[indexPath.row].name
-            cell.listLabel.font = UIFont(name: "BloggerSans-Medium", size: cell.listLabel.font.pointSize)
-        }else{
-            if(items[indexPath.row].votes == 1){
-                cell.listLabel.text = items[indexPath.row].name + " : " + String(items[indexPath.row].votes) + " like"
-                cell.listLabel.font = UIFont(name: "BloggerSans-Medium", size: cell.listLabel.font.pointSize)
-            }else{
-                cell.listLabel.text = items[indexPath.row].name + " : " + String(items[indexPath.row].votes) + " likes"
-                cell.listLabel.font = UIFont(name: "BloggerSans-Medium", size: cell.listLabel.font.pointSize)
-            }
-        }
-        return cell
-    }
-    
     //sends item to connected peers
     func sendItem (_ item: Item){
         if mcSession.connectedPeers.count > 0{
@@ -532,7 +509,37 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             print("not connected to other device")
         }
     }
+}
+
+extension ViewController: UITableViewDelegate, UITableViewDataSource{
     
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
+           return items.count
+       }
+
+       public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell{
+           let cell = tableView.dequeueReusableCell(withIdentifier: "cell") as! TableViewCell
+           cell.backgroundColor = color2
+           cell.listLabel.textColor = UIColor.black
+           
+           if items[indexPath.row].votes == 0{
+               cell.listLabel.text = items[indexPath.row].name
+               cell.listLabel.font = UIFont(name: "BloggerSans-Medium", size: cell.listLabel.font.pointSize)
+           }else{
+               if(items[indexPath.row].votes == 1){
+                   cell.listLabel.text = items[indexPath.row].name + " : " + String(items[indexPath.row].votes) + " like"
+                   cell.listLabel.font = UIFont(name: "BloggerSans-Medium", size: cell.listLabel.font.pointSize)
+               }else{
+                   cell.listLabel.text = items[indexPath.row].name + " : " + String(items[indexPath.row].votes) + " likes"
+                   cell.listLabel.font = UIFont(name: "BloggerSans-Medium", size: cell.listLabel.font.pointSize)
+               }
+           }
+           return cell
+       }
+       
+}
+
+extension ViewController: MCSessionDelegate, MCBrowserViewControllerDelegate{
     //MC Delegate functions
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
         switch state {
@@ -619,7 +626,4 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     func browserViewControllerWasCancelled(_ browserViewController: MCBrowserViewController) {
         dismiss(animated: true, completion: nil)
     }
-
-
 }
-
