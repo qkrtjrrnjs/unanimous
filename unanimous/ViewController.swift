@@ -151,87 +151,32 @@ class ViewController: UIViewController{
     func loadData(){
         items = DataManager.loadAll(Item.self)
         items.sort() { $0.votes > $1.votes }
-        self.tableView.reloadData()
     }
     
-    //handles votes
     @IBAction func voteButton(_ sender: Any) {
-        guard let indexPath = tableView.indexPathForSelectedRow else {
-            createAlert(title: "Error", message: "No item is selected!")
-            return
-        }
-        let indexPathRow = indexPath.row
-        
-        if(!voted){
-            prevVote = self.items[indexPathRow].itemIdentifier
-            self.items[indexPathRow].votes += 1
-            self.items[indexPathRow].saveItem()
-            self.sendItem(self.items[indexPathRow])
-            items.sort() { $0.votes > $1.votes }
-            self.tableView.reloadData()
-            voted = true
-            endButton.tintColor = color2
-            endButton.isEnabled = true
-        }else{
-            let actionSheet = UIAlertController(title: "Warning", message: "You have already voted, are you sure you want to change your vote?", preferredStyle: .actionSheet)
-            
-            actionSheet.addAction(UIAlertAction(
-                title: "Yes",
-                style: .default,
-                handler: { (action:UIAlertAction) in
-                    //removing previous vote
-                    for i in 0..<self.items.count{
-                        if self.items[i].itemIdentifier == self.prevVote{
-                            self.items[i].votes -= 1
-                            self.items[i].saveItem()
-                            self.sendItem(self.items[i])
-                            break
-                        }
-                    }
-                    self.items.sort() { $0.votes > $1.votes }
-                    self.tableView.reloadData()
-                    
-                    //casting new vote
-                    self.prevVote = self.items[indexPathRow].itemIdentifier
-                    self.items[indexPathRow].votes += 1
-                    self.items[indexPathRow].saveItem()
-                    self.sendItem(self.items[indexPathRow])
-                        
-                        self.items.sort() { $0.votes > $1.votes }
-                        self.tableView.reloadData()
-            }))
-            
-            actionSheet.addAction(UIAlertAction(
-                title: "No",
-                style: .default,
-                handler: nil
-            ))
-            
-            popoverPresentation(actionSheet: actionSheet)
-        }
-      
+       vote()
     }
     
     @IBAction func voteButton2(_ sender: Any) {
+        vote()
+    }
+    
+    func vote(){
         guard let indexPath = tableView.indexPathForSelectedRow else {
             createAlert(title: "Error", message: "No item is selected!")
             return
         }
-        let indexPathRow = indexPath.row
         
+        let indexPathRow = indexPath.row
+
         if(!voted){
-            prevVote = self.items[indexPathRow].itemIdentifier
-            self.items[indexPathRow].votes += 1
-            self.items[indexPathRow].saveItem()
-            self.sendItem(self.items[indexPathRow])
-            items.sort() { $0.votes > $1.votes }
-            self.tableView.reloadData()
+            self.castNewVote(indexPathRow: indexPathRow)
             voted = true
             endButton.tintColor = color2
             endButton.isEnabled = true
         }else{
             let actionSheet = UIAlertController(title: "Warning", message: "You have already voted, are you sure you want to change your vote?", preferredStyle: .actionSheet)
-            
+
             actionSheet.addAction(UIAlertAction(
                 title: "Yes",
                 style: .default,
@@ -247,15 +192,8 @@ class ViewController: UIViewController{
                     }
                     self.items.sort() { $0.votes > $1.votes }
                     self.tableView.reloadData()
+                    self.castNewVote(indexPathRow: indexPathRow)
                     
-                    //casting new vote
-                    self.prevVote = self.items[indexPathRow].itemIdentifier
-                    self.items[indexPathRow].votes += 1
-                    self.items[indexPathRow].saveItem()
-                    self.sendItem(self.items[indexPathRow])
-                    
-                    self.items.sort() { $0.votes > $1.votes }
-                    self.tableView.reloadData()
             }))
             
             actionSheet.addAction(UIAlertAction(
@@ -263,12 +201,19 @@ class ViewController: UIViewController{
                 style: .default,
                 handler: nil
             ))
-            
+
             popoverPresentation(actionSheet: actionSheet)
         }
- 
     }
     
+    func castNewVote(indexPathRow: Int){
+        self.prevVote = self.items[indexPathRow].itemIdentifier
+        self.items[indexPathRow].votes += 1
+        self.items[indexPathRow].saveItem()
+        self.sendItem(self.items[indexPathRow])
+        self.items.sort() { $0.votes > $1.votes }
+        self.tableView.reloadData()
+    }
     
     //edits items.name
     @IBAction func editButton(_ sender: Any) {
@@ -351,13 +296,7 @@ class ViewController: UIViewController{
                 }else{
                     self.mcAdvertiserAssistant = MCAdvertiserAssistant(serviceType: "ysyp", discoveryInfo: nil, session: self.mcSession)
                     self.mcAdvertiserAssistant.start()
-                    self.navBarTitle.text = "HOST"
-                    DataManager.clearAllFile()
-                    self.deleteAll()
-                    self.mcSession.disconnect()
-                    self.voted = false
-                    self.endButton.tintColor = self.color2
-                    self.endButton.isEnabled = true
+                    self.sessionCleanUp(endButtonColor: self.color2, isEndButtonEnabled: true, navBarText: "HOST")
                 }
         }))
         
@@ -371,13 +310,7 @@ class ViewController: UIViewController{
                     let mcBrowser = MCBrowserViewController(serviceType: "ysyp", session: self.mcSession)
                     mcBrowser.delegate = self
                     self.present(mcBrowser, animated: true, completion: nil)
-                    DataManager.clearAllFile()
-                    self.deleteAll()
-                    self.navBarTitle.text = "UNANIMOUS"
-                    self.mcSession.disconnect()
-                    self.voted = false
-                    self.endButton.tintColor = .clear
-                    self.endButton.isEnabled = false
+                    self.sessionCleanUp(endButtonColor: .clear, isEndButtonEnabled: false, navBarText: "UNANIMOUS")
                 }
         }))
         
@@ -388,6 +321,16 @@ class ViewController: UIViewController{
         ))
         
         popoverPresentation(actionSheet: actionSheet)
+    }
+    
+    func sessionCleanUp(endButtonColor: UIColor, isEndButtonEnabled: Bool, navBarText: String){
+        DataManager.clearAllFile()
+        self.deleteAll()
+        self.navBarTitle.text = navBarText
+        self.mcSession.disconnect()
+        self.voted = false
+        self.endButton.tintColor = endButtonColor
+        self.endButton.isEnabled = isEndButtonEnabled
     }
     
     func setupConnectivity(){
@@ -531,14 +474,16 @@ extension ViewController: MCSessionDelegate, MCBrowserViewControllerDelegate{
         switch state {
         case MCSessionState.connected:
             print("Connected: \(peerID.displayName)")
-            if(self.navBarTitle.text != "HOST"){
-                toolbar.isHidden = true
-                add.isEnabled = false
-                add.tintColor = .clear
-                toolbar2.isHidden = false
-            }else{
-                for i in 0..<items.count{
-                    self.sendItem(items[i])
+            DispatchQueue.main.async{
+                if(self.navBarTitle.text != "HOST"){
+                    self.toolbar.isHidden = true
+                    self.add.isEnabled = false
+                    self.add.tintColor = .clear
+                    self.toolbar2.isHidden = false
+                }else{
+                    for i in 0..<self.items.count{
+                        self.sendItem(self.items[i])
+                    }
                 }
             }
         case MCSessionState.connecting:
@@ -584,15 +529,14 @@ extension ViewController: MCSessionDelegate, MCBrowserViewControllerDelegate{
                 popoverPresentation(actionSheet: actionSheet)
             }
             
+            self.loadData()
             DispatchQueue.main.async {
-                self.loadData()//should not load data on main thread
+                self.tableView.reloadData()
             }
             
         }catch{
             print("Unable to process received data")
         }
-        
-        
     }
     
     func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
